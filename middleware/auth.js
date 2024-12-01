@@ -35,4 +35,4 @@ const verifyAdmin = (req, res, next) => {
   	next(); // Proceed if the session is valid
 }
 
-module.exports = { sessionMiddleware, verifySession };
+module.exports = { sessionMiddleware, verifySession, verifyAdmin};

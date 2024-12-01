@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+require('dotenv').config();
 const session = require("express-session");
 const mongoose = require('mongoose').set('debug', true);
 const bcrypt = require("bcrypt");
@@ -11,26 +12,22 @@ const User = require("./model/user");
 const Transaction = require("./model/transaction");
 const auth = require("./middleware/auth");
 const { sessionMiddleware, verifySession, verifyAdmin } = require("./middleware/auth");
-require('dotenv').config();
+//require('dotenv').config();
 const app = express(); const PORT = process.env.PORT || 4000;
-
+console.log(process.env.MONGO_URI);
 const cors = require('cors');
 
 // Allow requests from the frontend (React)
-app.use(cors({
-  origin: 'http://localhost:4000', // The URL of the React frontend
-  credentials: true, // Allow cookies (session tracking)
-}));
-
+//app.use(cors({
+//  origin: 'https://hackmo.glofiber.org', // The URL of the React frontend
+//  credentials: true, // Allow cookies (session tracking)
+//}));
 database.newDB(User, Transaction);
-
 const saltRounds = 10;
 app.use(express.json());
 app.use(sessionMiddleware()); // Apply session middleware globally
 // Serve static files from the React app
-
 app.use(express.static(path.join(__dirname, "hackmo/build")));
-
 
 // Example API route
 
@@ -110,7 +107,7 @@ app.get("/api/user", verifySession, (req, res) => {
 });
 
 // Admin route (only accessible by users with isAdmin set to true)
-app.get("/admin", verifySession, verifyAdmin, (req, res) => {
+app.get("/admin", verifyAdmin, (req, res) => {
   res.status(200).json({ message: "Welcome, admin!" });
 });
 
