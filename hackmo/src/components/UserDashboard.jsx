@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom'; // To handle redirects
+import { useNavigate } from 'react-router-dom'; // To handle redirects
 
 const UserDashboard = () => {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(true);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // Fetch the logged-in user details
   useEffect(() => {
@@ -20,18 +20,18 @@ const UserDashboard = () => {
           setUsername(data.user.username); // Assuming the backend returns the user object with username
         } else {
           // If the response is not okay, redirect to the register page
-          history.push('/register');
+          navigate('/register');
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        history.push('/register'); // If there's an error, redirect to the register page
+        navigate('/register'); // If there's an error, redirect to the register page
       } finally {
         setLoading(false); // Hide the loading spinner once the API call is done
       }
     };
 
     fetchUser();
-  }, [history]);
+  }, [navigate]);
 
   if (loading) {
     return <div>Loading...</div>; // Display a loading indicator while fetching user data

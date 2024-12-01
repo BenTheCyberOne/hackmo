@@ -12,7 +12,6 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<UserDashboard />} />
       </Routes>
-      </Switch>
     </Router>
   );
 };

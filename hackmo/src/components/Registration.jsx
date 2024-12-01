@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +26,7 @@ const Register = () => {
 
       if (response.ok) {
         // If registration is successful, redirect to the login page or dashboard
-        history.push('/login');
+        navigate('/login');
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Registration failed.');
