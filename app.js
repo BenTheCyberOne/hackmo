@@ -14,6 +14,13 @@ const auth = require("./middleware/auth");
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+const cors = require('cors');
+
+// Allow requests from the frontend (React)
+app.use(cors({
+  origin: 'http://localhost:4000', // The URL of the React frontend
+  credentials: true, // Allow cookies (session tracking)
+}));
 
 database.newDB(User, Transaction);
 
