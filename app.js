@@ -1,13 +1,25 @@
 const express = require("express");
-
 const path = require("path");
-
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const mongoose = require('mongoose').set('debug', true);
+const bcrypt = require("bcrypt");
+var database = require("./config/database");
+database.connect();
+const crypt3 = require('crypt3-passwd')
+const User = require("./model/user");
+const Transaction = require("./model/transaction");
+const auth = require("./middleware/auth");
 
 const app = express();
-
 const PORT = process.env.PORT || 4000;
 
 
+database.newDB(User, Transaction);
+
+const saltRounds = 10;
+app.use(express.json());
+app.use(sessionMiddleware()); // Apply session middleware globally
 // Serve static files from the React app
 
 app.use(express.static(path.join(__dirname, "hackmo/build")));
@@ -21,6 +33,79 @@ app.get("/api/example", (req, res) => {
 
 });
 
+// Register new user (for testing purposes)
+app.post("/register", async (req, res) => {
+  const { username, password} = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required" });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+    const newUser = new User({ username, password: hashedPassword});
+    await newUser.save();
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (err) {
+    if (err.code === 11000) {
+      res.status(400).json({ message: "Username already exists" });
+    } else {
+      res.status(500).json({ message: "Error registering user" });
+    }
+  }
+});
+
+// Login route
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required" });
+  }
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    // Save user info in session
+    req.session.user = { username: user.username, isAdmin: user.isAdmin };
+    res.cookie("sessionid", req.sessionID, { httpOnly: true });
+    // Set the `isAdmin` cookie based on the user's isAdmin status
+    res.cookie("isAdmin", user.isAdmin.toString(), { httpOnly: true });
+    res.status(200).json({ message: "Login successful" });
+  } catch (err) {
+    res.status(500).json({ message: "Error logging in" });
+  }
+});
+
+// Logout route
+app.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: "Error logging out" });
+    }
+    res.clearCookie("sessionid");
+    res.clearCookie("isAdmin");
+    res.status(200).json({ message: "User logged out" });
+  });
+});
+
+// Protected route to check the logged-in user's session
+app.get("/api/user", verifySession, (req, res) => {
+  res.status(200).json({ user: req.session.user });
+});
+
+// Admin route (only accessible by users with isAdmin set to true)
+app.get("/admin", verifySession, verifyAdmin, (req, res) => {
+  res.status(200).json({ message: "Welcome, admin!" });
+});
 
 // Catch-all route to serve React app
 
