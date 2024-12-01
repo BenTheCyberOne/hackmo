@@ -10,9 +10,9 @@ const crypt3 = require('crypt3-passwd')
 const User = require("./model/user");
 const Transaction = require("./model/transaction");
 const auth = require("./middleware/auth");
-
-const app = express();
-const PORT = process.env.PORT || 4000;
+const { sessionMiddleware, verifySession, verifyAdmin } = require("./middleware/auth");
+require('dotenv').config();
+const app = express(); const PORT = process.env.PORT || 4000;
 
 const cors = require('cors');
 

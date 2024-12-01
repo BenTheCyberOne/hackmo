@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const TransactionsSchema = new mongoose.Schema({
+const transactionsSchema = new mongoose.Schema({
 	timestamp: {type: Date},
 	sender: {type: String},
 	receiver: {type: String},
