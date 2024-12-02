@@ -17,13 +17,7 @@ const app = express(); const PORT = process.env.PORT || 4000;
 console.log(process.env.MONGO_URI);
 const cors = require('cors');
 
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "script-src 'self';" // Allow scripts from the same origin
-  );
-  next();
-});
+app.use(cors({ credentials: true }))
 
 // Allow requests from the frontend (React)
 //app.use(cors({
