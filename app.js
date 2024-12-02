@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const cookieParser = require("cookie-parser");
+//const cookieParser = require("cookie-parser");
 require('dotenv').config();
 const session = require("express-session");
 const mongoose = require('mongoose').set('debug', true);
@@ -37,6 +37,12 @@ app.use(express.static(path.join(__dirname, "hackmo/build")));
 
 // Example API route
 
+app.use((req, res, next) => {
+  console.log("Session ID in the request:", req.sessionID);
+  console.log("Session data:", req.session);
+  next();
+});
+
 app.get("/api/example", (req, res) => {
 
   res.json({ message: "Hello from the API!" });
@@ -56,7 +62,7 @@ app.post("/register", async (req, res) => {
     const newUser = new User({ username, password: hashedPassword});
     await newUser.save();
     req.session.user = { username: newUser.username, isAdmin: newUser.isAdmin };
-    res.cookie("sessionid", req.sessionID, { secure: true });
+    //res.cookie("sessionid", req.sessionID, { secure: true });
     // Set the `isAdmin` cookie based on the user's isAdmin status
     res.cookie("isAdmin", newUser.isAdmin.toString(), { secure: true });
     console.log("app.js sessions:");
