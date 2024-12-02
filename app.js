@@ -55,6 +55,10 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
     const newUser = new User({ username, password: hashedPassword});
     await newUser.save();
+    req.session.user = { username: newUser.username, isAdmin: newUser.isAdmin };
+    res.cookie("sessionid", req.sessionID, { secure: true });
+    // Set the `isAdmin` cookie based on the user's isAdmin status
+    res.cookie("isAdmin", newUser.isAdmin.toString(), { secure: true });
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
     if (err.code === 11000) {
