@@ -21,6 +21,7 @@ const sessionMiddleware = () => {
 };
 
 const verifySession = (req, res, next) => {
+  console.log('Session ID:', req.sessionID);
   if (!req.session.user) {
     return res.status(401).json({ message: "Unauthorized. No valid session." });
   }
