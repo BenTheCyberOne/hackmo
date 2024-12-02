@@ -16,7 +16,15 @@ const { sessionMiddleware, verifySession, verifyAdmin } = require("./middleware/
 const app = express(); const PORT = process.env.PORT || 4000;
 console.log(process.env.MONGO_URI);
 const cors = require('cors');
-app.options('*', cors())
+
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "script-src 'self';" // Allow scripts from the same origin
+  );
+  next();
+});
+
 // Allow requests from the frontend (React)
 //app.use(cors({
 //  origin: 'https://hackmo.glofiber.org', // The URL of the React frontend
