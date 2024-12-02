@@ -17,8 +17,13 @@ const app = express(); const PORT = process.env.PORT || 4000;
 console.log(process.env.MONGO_URI);
 const cors = require('cors');
 
-app.use(cors({ credentials: true }))
-
+const corsOptions = { 
+  // origin:'https://abc.onrender.com',
+  AccessControlAllowOrigin: '*',  
+  origin: '*',  
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE' 
+}
+app.use(cors(corsOptions))
 // Allow requests from the frontend (React)
 //app.use(cors({
 //  origin: 'https://hackmo.glofiber.org', // The URL of the React frontend
