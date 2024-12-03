@@ -68,6 +68,18 @@ const Register = () => {
             className="input"
           />
         </div>
+         <div className="form-group">
+          <label htmlFor="confirmPassword" className="label">
+          Confirm Password
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            className="input"
+          />
+        </div>
         <button type="submit" className="btn-primary">
           Login
         </button>
