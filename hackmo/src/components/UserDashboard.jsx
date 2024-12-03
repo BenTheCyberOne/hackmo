@@ -20,11 +20,11 @@ const UserDashboard = () => {
           const data = await response.json();
           setUsername(data.user.username); // Assuming the backend returns the user object with username
         } else {
-          navigate('/register'); // Redirect if unauthorized
+          return navigate('/login'); // Redirect if unauthorized
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        navigate('/login');
+        return navigate('/login');
       } finally {
         setLoading(false);
       }

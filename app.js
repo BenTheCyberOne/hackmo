@@ -135,7 +135,7 @@ app.get("/api/user", verifySession, (req, res) => {
 app.get("/api/transactions", verifySession, async (req, res) => {
   try{
     const transactions = await Transaction.find();
-    res.status(200).json(transactions);
+    res.status(200).json(transactions: transactions);
   } catch (err){
     res.status(500).json({message: "Something wrong with getting transactions..."});
     console.log(err);
