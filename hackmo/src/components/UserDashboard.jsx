@@ -130,7 +130,8 @@ const UserDashboard = () => {
                 <p>To: {tx.receiver}</p>
                 <br />
                 <p>Amount: ${tx.amount}</p>
-                <p>Time: {new Date(tx.timestamp).toLocaleString()}</p>
+                const timestampInMs = tx.timestamp.seconds * 1000 + tx.timestamp.nanoseconds / 1e6;
+                <p>Time: {new Date(timestampInMs).toLocaleString()}</p>
               </motion.div>
             ))}
           </AnimatePresence>
