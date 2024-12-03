@@ -167,7 +167,7 @@ app.get("/api/transactions/stream", (req, res) => {
   res.setHeader("Content-Encoding", "none");
 
   console.log("Client connected to SSE stream");
-
+  res.write('\n');
   // Function to send data to the client
   const sendTransaction = (transaction) => {
     console.log('tran-stream:',transaction);
@@ -176,14 +176,11 @@ app.get("/api/transactions/stream", (req, res) => {
 
   // Listen for new transactions and send them to the client
   transactionEmitter.on("newTransaction", sendTransaction);
- // Send a keep-alive message every 25 seconds to prevent timeouts
-  const keepAliveInterval = setInterval(() => {
-    res.write("data: keep-alive\n\n");
-  }, 5000); // Sends keep-alive message every 5 seconds
+
   // Handle client disconnection
   req.on("close", () => {
     console.log("Client disconnected from SSE stream");
-    clearInterval(keepAliveInterval);
+   // clearInterval(keepAliveInterval);
     transactionEmitter.removeListener("newTransaction", sendTransaction);
     res.end();
   });
@@ -197,7 +194,7 @@ app.get("/api/user/stream", (req, res) => {
   res.setHeader("Content-Encoding", "identity");
 
   console.log("Client connected to SSE stream");
-
+  res.write('\n');
   // Function to send data to the client
   const sendUserData = (userData) => {
     console.log('user-stream:',userData);
@@ -206,16 +203,16 @@ app.get("/api/user/stream", (req, res) => {
 
   // Listen for new transactions and send them to the client
   userEmitter.on("newBalance", sendUserData);
-
+/*
    // Send a keep-alive message every 25 seconds to prevent timeouts
   const keepAliveInterval = setInterval(() => {
     res.write("data: keep-alive\n\n");
   }, 5000); // Sends keep-alive message every 5 seconds
-
+*/
   // Handle client disconnection
   req.on("close", () => {
     console.log("Client disconnected from SSE stream");
-    clearInterval(keepAliveInterval);
+   // clearInterval(keepAliveInterval);
     userEmitter.removeListener("newBalance", sendUserData);
     res.end();
   });
