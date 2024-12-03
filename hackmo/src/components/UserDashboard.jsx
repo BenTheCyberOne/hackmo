@@ -97,11 +97,11 @@ const UserDashboard = () => {
     <div className="container dashboard">
       <h1>User Dashboard</h1>
       <p>Welcome, {username}!</p>
-      <SendComponent balance={userBalance} />
+      <SendComponent balance={balance} />
       <h2>Latest Transactions</h2>
       <div >
       {transactions && transactions.length > 0 ? (
-        transactions.map((transactionN, index) => (
+        transactions.map((tx, index) => (
           <div className="transaction-box" key={index}>
             <h4>From: {tx.sender}</h4>
             <p>To: {tx.receiver}</p>
