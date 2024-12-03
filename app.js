@@ -202,7 +202,7 @@ app.get("/imager", (req, res) => {
   if (!fs.existsSync(absolutePath)) {
     return res.status(404).json({ error: 'File not found.' });
   }
-  const mimeType = mime.lookup(absolutePath);
+  const mimeType = mime.getType(absolutePath);
   // Handle image files specifically
   if (mimeType && mimeType.startsWith('image/')) {
     res.setHeader('Content-Type', mimeType); // Set the appropriate image MIME type
