@@ -169,6 +169,7 @@ app.get("/api/transactions/stream", (req, res) => {
 
   // Function to send data to the client
   const sendTransaction = (transaction) => {
+    console.log('tran-stream:' transaction);
     res.write(`data: ${JSON.stringify(transaction)}\n\n`);
   };
 
@@ -197,11 +198,12 @@ app.get("/api/user/stream", (req, res) => {
 
   // Function to send data to the client
   const sendUserData = (userData) => {
+    console.log('tuser-stream:' userData);
     res.write(`data: ${JSON.stringify(userData)}\n\n`);
   };
 
   // Listen for new transactions and send them to the client
-  transactionEmitter.on("newBalance", sendUserData);
+  userEmitter.on("newBalance", sendUserData);
 
    // Send a keep-alive message every 25 seconds to prevent timeouts
   const keepAliveInterval = setInterval(() => {
@@ -212,7 +214,7 @@ app.get("/api/user/stream", (req, res) => {
   req.on("close", () => {
     console.log("Client disconnected from SSE stream");
     clearInterval(keepAliveInterval);
-    transactionEmitter.removeListener("newBalance", sendUserData);
+    userEmitter.removeListener("newBalance", sendUserData);
     res.end();
   });
 });
