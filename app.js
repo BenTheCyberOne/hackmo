@@ -132,6 +132,7 @@ app.get("/api/user", verifySession, async (req, res) => {
   try{
     const getUser = await User.find({username: req.session.user.username});
     const user = {username: getUser.username, balance: getUser.balance};
+    console.log("user:", user)
     res.status(200).json(user);
   }catch(err){
     console.log("messed up DB for sure");
