@@ -62,9 +62,9 @@ app.post("/register", async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
     const newUser = new User({ username, password: hashedPassword});
-    const userExists = User.find({username: username});
+    const userExists = await User.findOne({username: username});
     if (userExists){
-      res.status(400).json({ message: "Username already exists" });
+      return res.status(400).json({ message: "Username already exists" });
     }
     await User.create(newUser);
     console.log("created User:", username);
@@ -132,9 +132,9 @@ app.get("/api/user", verifySession, (req, res) => {
   res.status(200).json({ user: req.session.user });
 });
 
-app.get("/api/transactions", verifySession, (req, res) => {
+app.get("/api/transactions", verifySession, async (req, res) => {
   try{
-    const transactions = Transaction.find();
+    const transactions = await Transaction.find();
     res.status(200).json(transactions);
   } catch (err){
     res.status(500).json({message: "Something wrong with getting transactions..."});
@@ -180,15 +180,15 @@ app.post("/send", verifySession, async (req,res) => {
   try{
     const recvExists = await User.find({username: receiverID});
     if (!recvExists){
-       res.status(400).json({ message: "Error: Receiver does not exist!" });
+       return res.status(400).json({ message: "Error: Receiver does not exist!" });
     }
     if (amount > balance){
-      res.status(401).json({ message: "Error: Not enough in your account!" });
+      return res.status(401).json({ message: "Error: Not enough in your account!" });
     }
     newBal = balance - amount;
     const check = await User.findOneAndUpdate({username: senderID},{$set: {balance: newBal}});
     if (!check){
-      res.status(500).json({ message: "Something's wrong with the G-Diffuser!" });
+      return res.status(500).json({ message: "Something's wrong with the G-Diffuser!" });
     }
     const transaction = new Transaction({timestamp: new Date(), sender: senderID, receiver: receiverID, amount: amount})
     const check2 = await Transaction.create(transaction);
