@@ -17,6 +17,7 @@ const sessionMiddleware = () => {
       httpOnly: true,
       secure: true,  // Set to `true` if using HTTPS in production
       maxAge: 1000 * 60 * 60 * 24, // Session expiry time (1 day)
+      sameSite: 'lax', // Adjust based on your cross-site requirements
     },
   });
 };

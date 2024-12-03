@@ -21,7 +21,7 @@ const cors = require('cors');
     origin: '*', //included origin as true
     credentials: true, //included credentials as true
 };
-
+app.use(sessionMiddleware()); // Apply session middleware globally
 app.use(cors(corsOptions));
 // Allow requests from the frontend (React)
 //app.use(cors({
@@ -31,15 +31,16 @@ app.use(cors(corsOptions));
 database.newDB(User, Transaction);
 const saltRounds = 10;
 app.use(express.json());
-app.use(sessionMiddleware()); // Apply session middleware globally
+
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "hackmo/build")));
 
 // Example API route
 
 app.use((req, res, next) => {
-  console.log("Session ID in the request:", req.sessionID);
-  console.log("Session data:", req.session);
+  console.log("Session ID in the request (browser cookie):", req.cookies?.sessionid); // From browser
+  console.log("Session ID assigned by server:", req.sessionID); // From middleware
+  console.log("Session data from store:", req.session);
   next();
 });
 
