@@ -38,22 +38,35 @@ const UserDashboard = () => {
 
   // Grab new user balance
   useEffect(() => {
-
     // Listen for real-time transaction updates using SSE
     const eventSource = new EventSource('/api/user/stream'); // Backend SSE endpoint
+
     eventSource.onmessage = (event) => {
-      console.log("userStream:",event.data);
-      if(event.data !== "keep-alive"){
-        const newBal = JSON.parse(event.data);
-        setBalance(newBal.balance)
+      // Log the received data for debugging
+      console.log("userStream:", event.data);
+
+      if (event.data !== "keep-alive") {
+        try {
+          // Parse the event data and update the balance
+          const newBal = JSON.parse(event.data);
+          setBalance(newBal.balance);
+        } catch (error) {
+          console.error("Error parsing SSE data:", error);
+        }
       }
-      
     };
 
-    return () => {
-      eventSource.close(); // Clean up SSE subscription
+    // Handle any errors in the SSE connection
+    eventSource.onerror = (error) => {
+      console.error("SSE connection error:", error);
+      eventSource.close(); // Close the connection on error
     };
-  }, []);
+
+    // Return a cleanup function to close the SSE connection when the component unmounts
+    return () => {
+      eventSource.close(); // Close the SSE connection on component unmount
+    };
+  }, []); // Empty dependency array ensures this effect only runs once
 
   // Fetch transactions initially and subscribe to updates
   useEffect(() => {
@@ -82,7 +95,7 @@ const UserDashboard = () => {
     // Listen for real-time transaction updates using SSE
     const eventSource = new EventSource('/api/transactions/stream'); // Backend SSE endpoint
     eventSource.onmessage = (event) => {
-      
+      console.log("_transactionStream:",event.data)
       if(event.data !== "keep-alive") {
         const newTransaction = JSON.parse(event.data);
         console.log("transactionStream:",event.data);
