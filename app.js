@@ -137,7 +137,7 @@ app.get("/api/transactions", verifySession, (req, res) => {
     const transactions = Transaction.find();
     res.status(200).json(transactions);
   } catch (err){
-    res.status(500).json(message: "Something wrong with getting transactions...");
+    res.status(500).json({message: "Something wrong with getting transactions..."});
     console.log(err);
   }
 })
