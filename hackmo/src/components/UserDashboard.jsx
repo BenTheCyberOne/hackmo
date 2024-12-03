@@ -117,8 +117,6 @@ const UserDashboard = () => {
         {transactions && transactions.length > 0 ? (
           <AnimatePresence>
             {transactions.map((tx, index) => (
-              console.log("tx",tx);
-              console.log("timestamp:",tx.timestamp);
 
               <motion.div
                 className="transaction-box"
