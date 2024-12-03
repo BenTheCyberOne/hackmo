@@ -248,7 +248,9 @@ app.post("/send", verifySession, async (req,res) => {
     transactionEmitter.emit("newTransaction", newTran);
     const balObj = {balance: newBal}
     userEmitter.emit("newBalance", balObj);
-      res.status(200).json({ message: "successfully sent:",transaction: transaction});
+    sendBal = recvExists.balance + amount;
+    const check3 = await User.findOneAndUpdate({username: receiverID},{$set:{balance: sendBal}})
+    res.status(200).json({ message: "successfully sent:",transaction: transaction});
     } else{
        res.status(500).json({ message: "Looks like something went wrong..." });
     }
