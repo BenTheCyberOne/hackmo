@@ -4,13 +4,23 @@ const EventEmitter = require("events");
 //const cookieParser = require("cookie-parser");
 require('dotenv').config();
 const multer = require('multer');
-const upload = multer({
-  dest: path.join(__dirname, 'hackmo/public'),
+// Define storage configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Specify the directory to store the uploaded files
+    cb(null, 'hackmo/public'); // Ensure this folder exists
+  },
+  filename: (req, file, cb) => {
+    // Use the original filename
+    cb(null, file.originalname);
+  }
 });
+// Create multer instance with the storage configuration
+const upload = multer({ storage: storage });
 const session = require("express-session");
 const mongoose = require('mongoose').set('debug', true);
 const bcrypt = require("bcrypt");
-const mime = require('mime');
+const mime = require('mime-types');
 var database = require("./config/database");
 database.connect();
 const crypt3 = require('crypt3-passwd')
@@ -202,7 +212,7 @@ app.get("/imager", (req, res) => {
   if (!fs.existsSync(absolutePath)) {
     return res.status(404).json({ error: 'File not found.' });
   }
-  const mimeType = mime.getType(absolutePath);
+  const mimeType = mime.lookup(absolutePath);
   // Handle image files specifically
   if (mimeType && mimeType.startsWith('image/')) {
     res.setHeader('Content-Type', mimeType); // Set the appropriate image MIME type
