@@ -38,44 +38,39 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h1>Register</h1>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">Username</label>
+    <div className="login-wrapper">
+      <h2 className="header">Login</h2>
+      {errorMessage && <p className="error-text">{errorMessage}</p>}
+      <form className="form" onSubmit={handleLogin}>
+        <div className="form-group">
+          <label htmlFor="username" className="label">
+            Username
+          </label>
           <input
             type="text"
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            className="input"
           />
         </div>
-
-        <div>
-          <label htmlFor="password">Password</label>
+        <div className="form-group">
+          <label htmlFor="password" className="label">
+            Password
+          </label>
           <input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="input"
           />
         </div>
-
-        <div>
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-
-        <button type="submit">Register</button>
+        <button type="submit" className="btn-primary">
+          Login
+        </button>
       </form>
     </div>
   );

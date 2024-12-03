@@ -33,33 +33,39 @@ const Login = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-      <h2>Login</h2>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="username" style={{ display: 'block', marginBottom: '5px' }}>Username</label>
+    <div className="container login-container">
+      <h2 className="title">Login</h2>
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      <form className="form" onSubmit={handleLogin}>
+        <div className="form-group">
+          <label htmlFor="username" className="form-label">
+            Username
+          </label>
           <input
             type="text"
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px' }}
+            className="form-input"
           />
         </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="password" style={{ display: 'block', marginBottom: '5px' }}>Password</label>
+        <div className="form-group">
+          <label htmlFor="password" className="form-label">
+            Password
+          </label>
           <input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px' }}
+            className="form-input"
           />
         </div>
-        <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>Login</button>
+        <button type="submit" className="button-primary">
+          Login
+        </button>
       </form>
     </div>
   );

@@ -128,14 +128,21 @@ app.get("/logout", (req, res) => {
 });
 
 // Protected route to check the logged-in user's session
-app.get("/api/user", verifySession, (req, res) => {
-  res.status(200).json({ user: req.session.user });
+app.get("/api/user", verifySession, async (req, res) => {
+  try{
+    const getUser = User.find({username: req.session.user.username});
+    const user = {username: getUser.username, balance: getUser.balance};
+    res.status(200).json(user);
+  }catch(err){
+    console.log("messed up DB for sure");
+  }
+  
 });
 
 app.get("/api/transactions", verifySession, async (req, res) => {
   try{
     const transactions = await Transaction.find();
-    res.status(200).json(transactions: transactions);
+    res.status(200).json({transactions: transactions});
   } catch (err){
     res.status(500).json({message: "Something wrong with getting transactions..."});
     console.log(err);
@@ -149,6 +156,7 @@ app.get("/admin", verifyAdmin, (req, res) => {
 
 
 const transactionEmitter = new EventEmitter();
+const userEmitter = new EventEmitter();
 
 app.get("/api/transactions/stream", (req, res) => {
   // Set headers for SSE
@@ -170,6 +178,30 @@ app.get("/api/transactions/stream", (req, res) => {
   req.on("close", () => {
     console.log("Client disconnected from SSE stream");
     transactionEmitter.removeListener("newTransaction", sendTransaction);
+    res.end();
+  });
+});
+
+app.get("/api/user/stream", (req, res) => {
+  // Set headers for SSE
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  console.log("Client connected to SSE stream");
+
+  // Function to send data to the client
+  const sendUserData = (userData) => {
+    res.write(`data: ${JSON.stringify(userData)}\n\n`);
+  };
+
+  // Listen for new transactions and send them to the client
+  transactionEmitter.on("newBalance", sendUserData);
+
+  // Handle client disconnection
+  req.on("close", () => {
+    console.log("Client disconnected from SSE stream");
+    transactionEmitter.removeListener("newBalance", sendUserData);
     res.end();
   });
 });
@@ -196,6 +228,7 @@ app.post("/send", verifySession, async (req,res) => {
       console.log("Created Transaction: ",transaction);
       // Emit the transaction to SSE clients
     transactionEmitter.emit("newTransaction", transaction);
+    userEmitter.emit("newBalance", newBal);
       res.status(200).json({ message: "successfully sent:",transaction: transaction});
     } else{
        res.status(500).json({ message: "Looks like something went wrong..." });

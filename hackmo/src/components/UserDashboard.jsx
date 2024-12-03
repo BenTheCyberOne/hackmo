@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // To handle redirects
+import SendComponent from "./SendComponent";
 
 const UserDashboard = () => {
   const [username, setUsername] = useState('');
+  const [balance, setBalance] = useState('');
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const UserDashboard = () => {
         if (response.ok) {
           const data = await response.json();
           setUsername(data.user.username); // Assuming the backend returns the user object with username
+          setBalance(data.user.balance);
         } else {
           return navigate('/login'); // Redirect if unauthorized
         }
@@ -32,6 +35,22 @@ const UserDashboard = () => {
 
     fetchUser();
   }, [navigate]);
+
+  // Grab new user balance
+  useEffect(() => {
+
+    // Listen for real-time transaction updates using SSE
+    const eventSource = new EventSource('/api/user/stream'); // Backend SSE endpoint
+    eventSource.onmessage = (event) => {
+      console.log("userStream:",event.data);
+      const newBal = JSON.parse(event.data);
+      setBalance(newBal.balance)
+    };
+
+    return () => {
+      eventSource.close(); // Clean up SSE subscription
+    };
+  }, []);
 
   // Fetch transactions initially and subscribe to updates
   useEffect(() => {
@@ -61,6 +80,7 @@ const UserDashboard = () => {
     const eventSource = new EventSource('/api/transactions/stream'); // Backend SSE endpoint
     eventSource.onmessage = (event) => {
       const newTransaction = JSON.parse(event.data);
+      console.log("transactionStream:",event.data);
       setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]); // Prepend new transaction
     };
 
@@ -74,25 +94,18 @@ const UserDashboard = () => {
   }
 
   return (
-    <div>
+    <div className="container dashboard">
       <h1>User Dashboard</h1>
       <p>Welcome, {username}!</p>
+      <SendComponent balance={userBalance} />
       <h2>Latest Transactions</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div >
       {transactions && transactions.length > 0 ? (
         transactions.map((transactionN, index) => (
-          <div
-            key={index}
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              padding: '10px',
-              backgroundColor: '#f9f9f9',
-            }}
-          >
-            <p><strong>Sender:</strong> {transactionN.sender}</p>
-            <p><strong>Receiver:</strong> {transactionN.receiver}</p>
-            <p><strong>Amount:</strong> {transactionN.amount}</p>
+          <div className="transaction-box" key={index}>
+            <h4>From: {tx.sender}</h4>
+            <p>To: {tx.receiver}</p>
+            <p>Amount: ${tx.amount}</p>
           </div>
         ))
         ) : (

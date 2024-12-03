@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import UserDashboard from './components/UserDashboard';
 import Register from './components/Registration';
 import Login from './components/Login';
+import './styles.css';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // Tracks session status
