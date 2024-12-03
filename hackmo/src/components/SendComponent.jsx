@@ -20,7 +20,7 @@ const SendComponent = ({ balance }) => {
 
       if (response.ok) {
         const data = await response.json();
-        setMessage(`Transaction Successful: ${data.transaction.sender} sent ${data.transaction.amount} to ${data.transaction.receiver}`);
+        setMessage(`Transaction Successful: ${data.transaction.sender} sent $${data.transaction.amount} to ${data.transaction.receiver}`);
       } else {
         const errorData = await response.json();
         setMessage(`Error: ${errorData.message}`);

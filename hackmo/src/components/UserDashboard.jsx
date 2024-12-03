@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // To handle redirects
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion'; // Import Framer Motion
 import SendComponent from "./SendComponent";
 import AnimatedBalance from "./AnimatedBalance";
+
 const UserDashboard = () => {
   const [username, setUsername] = useState('');
   const [balance, setBalance] = useState('');
@@ -9,21 +11,20 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch the logged-in user details
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await fetch('/api/user', {
           method: 'GET',
-          credentials: 'include', // Include cookies for session validation
+          credentials: 'include',
         });
 
         if (response.ok) {
           const data = await response.json();
-          setUsername(data.username); // Assuming the backend returns the user object with username
+          setUsername(data.username);
           setBalance(data.balance);
         } else {
-          return navigate('/login'); // Redirect if unauthorized
+          return navigate('/login');
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -36,21 +37,16 @@ const UserDashboard = () => {
     fetchUser();
   }, [navigate]);
 
-  // Grab new user balance
   useEffect(() => {
-    // Listen for real-time transaction updates using SSE
-    const eventSource = new EventSource('/api/stream/user'); // Backend SSE endpoint
-      // Log when the SSE connection opens
+    const eventSource = new EventSource('/api/stream/user');
     eventSource.onopen = () => {
       console.log("SSE connection established");
     };
     eventSource.onmessage = (event) => {
-      // Log the received data for debugging
       console.log("userStream:", event.data);
 
       if (event.data !== "keep-alive") {
         try {
-          // Parse the event data and update the balance
           const newBal = JSON.parse(event.data);
           setBalance(newBal.balance);
         } catch (error) {
@@ -59,19 +55,16 @@ const UserDashboard = () => {
       }
     };
 
-    // Handle any errors in the SSE connection
     eventSource.onerror = (error) => {
       console.error("SSE connection error:", error);
-      eventSource.close(); // Close the connection on error
+      eventSource.close();
     };
 
-    // Return a cleanup function to close the SSE connection when the component unmounts
     return () => {
-      eventSource.close(); // Close the SSE connection on component unmount
+      eventSource.close();
     };
-  }, []); // Empty dependency array ensures this effect only runs once
+  }, []);
 
-  // Fetch transactions initially and subscribe to updates
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -81,10 +74,9 @@ const UserDashboard = () => {
         });
 
         if (response.ok) {
-
           const data = await response.json();
-          console.log("OK",data);
-          setTransactions(data.transactions); // Assume `transactions` array is returned
+          console.log("OK", data);
+          setTransactions(data.transactions);
         } else {
           console.error('Failed to fetch transactions.');
         }
@@ -95,20 +87,18 @@ const UserDashboard = () => {
 
     fetchTransactions();
 
-    // Listen for real-time transaction updates using SSE
-    const eventSource = new EventSource('/api/stream/transactions'); // Backend SSE endpoint
+    const eventSource = new EventSource('/api/stream/transactions');
     eventSource.onmessage = (event) => {
-      console.log("_transactionStream:",event.data)
-      if(event.data !== "keep-alive") {
+      console.log("_transactionStream:", event.data);
+      if (event.data !== "keep-alive") {
         const newTransaction = JSON.parse(event.data);
-        console.log("transactionStream_:",event.data);
-        setTransactions((prevTransactions) => [newTransaction.transactions, ...prevTransactions]); // Prepend new transaction
+        console.log("transactionStream_:", event.data);
+        setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
       }
-      
     };
 
     return () => {
-      eventSource.close(); // Clean up SSE subscription
+      eventSource.close();
     };
   }, []);
 
@@ -123,20 +113,29 @@ const UserDashboard = () => {
       <AnimatedBalance balance={balance} />
       <SendComponent balance={balance} />
       <h2>Latest Transactions</h2>
-      <div >
-      {transactions && transactions.length > 0 ? (
-        transactions.map((tx, index) => (
-          <div className="transaction-box" key={index}>
-            <h4>From: {tx.sender}</h4>
-            <br/>
-            <p>To: {tx.receiver}</p>
-            <br/>
-            <p>Amount: ${tx.amount}</p>
-            <p>Time: ${tx.timestamp}</p>
-          </div>
-        ))
+      <div>
+        {transactions && transactions.length > 0 ? (
+          <AnimatePresence>
+            {transactions.map((tx, index) => (
+              <motion.div
+                className="transaction-box"
+                key={tx.id || index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <h4>From: {tx.sender}</h4>
+                <br />
+                <p>To: {tx.receiver}</p>
+                <br />
+                <p>Amount: ${tx.amount}</p>
+                <p>Time: {new Date(tx.timestamp).toLocaleString()}</p>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         ) : (
-        <p>No transactions available </p>
+          <p>No transactions available</p>
         )}
       </div>
     </div>
