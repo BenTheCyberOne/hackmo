@@ -194,7 +194,7 @@ app.get("/api/user/stream", (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
-  res.setHeader("Content-Encoding", "none");
+  res.setHeader("Content-Encoding", "identity");
 
   console.log("Client connected to SSE stream");
 
