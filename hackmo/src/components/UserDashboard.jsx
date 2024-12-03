@@ -125,13 +125,14 @@ const UserDashboard = () => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
+                console.log("tx",tx);
                 <h4>From: {tx.sender}</h4>
                 <br />
                 <p>To: {tx.receiver}</p>
                 <br />
                 <p>Amount: ${tx.amount}</p>
-                const timestampInMs = tx.timestamp.seconds * 1000 + tx.timestamp.nanoseconds / 1e6;
-                <p>Time: {new Date(timestampInMs).toLocaleString()}</p>
+                console.log("timestamp:",tx.timestamp);
+                <p>Time: {tx.timestamp ? new Date(tx.timestamp).toLocaleString() : "Unknown"}</p>
               </motion.div>
             ))}
           </AnimatePresence>
