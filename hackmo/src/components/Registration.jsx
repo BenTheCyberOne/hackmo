@@ -41,7 +41,7 @@ const Register = () => {
     <div className="login-wrapper">
       <h2 className="header">Login</h2>
       {errorMessage && <p className="error-text">{errorMessage}</p>}
-      <form className="form" onSubmit={handleLogin}>
+      <form className="form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="username" className="label">
             Username
