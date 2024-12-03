@@ -37,7 +37,6 @@ const Admin = () => {
         if (response.ok) {
           const data = await response.json();
           setUsername(data.username);
-          setBalance(data.balance);
         } else {
           return navigate('/login');
         }
@@ -51,34 +50,6 @@ const Admin = () => {
 
     fetchUser();
   }, [navigate]);
-
-  useEffect(() => {
-    const eventSource = new EventSource('/api/stream/user');
-    eventSource.onopen = () => {
-      console.log("SSE connection established");
-    };
-    eventSource.onmessage = (event) => {
-      console.log("userStream:", event.data);
-
-      if (event.data !== "keep-alive") {
-        try {
-          const newBal = JSON.parse(event.data);
-          setBalance(newBal.balance);
-        } catch (error) {
-          console.error("Error parsing SSE data:", error);
-        }
-      }
-    };
-
-    eventSource.onerror = (error) => {
-      console.error("SSE connection error:", error);
-      eventSource.close();
-    };
-
-    return () => {
-      eventSource.close();
-    };
-  }, []);
 
   useEffect(() => {
     const fetchTransactions = async () => {
