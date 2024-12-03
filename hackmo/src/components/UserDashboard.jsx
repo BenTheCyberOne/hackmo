@@ -43,8 +43,11 @@ const UserDashboard = () => {
     const eventSource = new EventSource('/api/user/stream'); // Backend SSE endpoint
     eventSource.onmessage = (event) => {
       console.log("userStream:",event.data);
-      const newBal = JSON.parse(event.data);
-      setBalance(newBal.balance)
+      if(event.data !== "keep-alive"){
+        const newBal = JSON.parse(event.data);
+        setBalance(newBal.balance)
+      }
+      
     };
 
     return () => {
@@ -79,9 +82,13 @@ const UserDashboard = () => {
     // Listen for real-time transaction updates using SSE
     const eventSource = new EventSource('/api/transactions/stream'); // Backend SSE endpoint
     eventSource.onmessage = (event) => {
-      const newTransaction = JSON.parse(event.data);
-      console.log("transactionStream:",event.data);
-      setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]); // Prepend new transaction
+      
+      if(event.data !== "keep-alive") {
+        const newTransaction = JSON.parse(event.data);
+        console.log("transactionStream:",event.data);
+        setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]); // Prepend new transaction
+      }
+      
     };
 
     return () => {

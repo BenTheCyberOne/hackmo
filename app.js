@@ -169,7 +169,7 @@ app.get("/api/transactions/stream", (req, res) => {
 
   // Function to send data to the client
   const sendTransaction = (transaction) => {
-    console.log('tran-stream:' transaction);
+    console.log('tran-stream:',transaction);
     res.write(`data: ${JSON.stringify(transaction)}\n\n`);
   };
 
