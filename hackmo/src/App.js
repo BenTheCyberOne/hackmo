@@ -7,42 +7,13 @@ import Login from './components/Login';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // Tracks session status
   const [loading, setLoading] = useState(true); // Tracks whether the app is checking session
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await fetch('/api/user', {
-          method: 'GET',
-          credentials: 'include', // Send cookies with the request
-        });
-
-        if (response.ok) {
-          setIsAuthenticated(true); // User has a valid session
-        } else {
-          setIsAuthenticated(false); // No valid session
-        }
-      } catch (error) {
-        console.error('Error checking session:', error);
-        setIsAuthenticated(false); // Assume no session on error
-      } finally {
-        setLoading(false); // Stop loading indicator
-      }
-    };
-
-    checkSession();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading indicator while checking session
-  }
-
   return (
     <Router>
       <Routes>
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/login"} />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );
