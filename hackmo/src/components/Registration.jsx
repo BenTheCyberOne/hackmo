@@ -25,7 +25,7 @@ const Register = () => {
         body: JSON.stringify({ username, password }),
       });
 
-      if (response.ok) {
+      if (response.status_code == "200") {
         // If registration is successful, redirect to the login page or dashboard
         navigate('/dashboard');
       } else {
