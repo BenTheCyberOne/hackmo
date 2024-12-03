@@ -45,7 +45,7 @@ const App = () => {
         />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} />} />
+        <Route path="*" element={<Navigate to="/login"} />} />
       </Routes>
     </Router>
   );
