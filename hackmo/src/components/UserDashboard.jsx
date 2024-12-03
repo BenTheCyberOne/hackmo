@@ -77,7 +77,7 @@ const UserDashboard = () => {
       <p>Welcome, {username}!</p>
       <h2>Latest Transactions</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {transactions.map((transaction, index) => (
+        {transactions.map((transactionN, index) => (
           <div
             key={index}
             style={{
@@ -87,9 +87,9 @@ const UserDashboard = () => {
               backgroundColor: '#f9f9f9',
             }}
           >
-            <p><strong>Sender:</strong> {transaction.sender}</p>
-            <p><strong>Receiver:</strong> {transaction.receiver}</p>
-            <p><strong>Amount:</strong> {transaction.amount}</p>
+            <p><strong>Sender:</strong> {transactionN.sender}</p>
+            <p><strong>Receiver:</strong> {transactionN.receiver}</p>
+            <p><strong>Amount:</strong> {transactionN.amount}</p>
           </div>
         ))}
       </div>
