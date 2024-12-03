@@ -130,7 +130,7 @@ app.get("/logout", (req, res) => {
 // Protected route to check the logged-in user's session
 app.get("/api/user", verifySession, async (req, res) => {
   try{
-    const getUser = User.find({username: req.session.user.username});
+    const getUser = await User.find({username: req.session.user.username});
     const user = {username: getUser.username, balance: getUser.balance};
     res.status(200).json(user);
   }catch(err){
