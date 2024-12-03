@@ -43,6 +43,7 @@ const UserDashboard = () => {
         });
 
         if (response.ok) {
+          console.log("OK",data.transactions);
           const data = await response.json();
           setTransactions(data.transactions); // Assume `transactions` array is returned
         } else {

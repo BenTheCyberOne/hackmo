@@ -21,7 +21,7 @@ const Login = () => {
 
       if (response.ok) {
         // If login is successful, redirect to the dashboard
-        navigate('/dashboard');
+        return navigate('/dashboard');
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Invalid username or password.');

@@ -27,7 +27,7 @@ const Register = () => {
 
       if (response.ok) {
         // If registration is successful, redirect to the login page or dashboard
-        navigate('/dashboard');
+        return navigate('/dashboard');
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Registration failed.');
