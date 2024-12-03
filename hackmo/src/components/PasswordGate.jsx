@@ -8,10 +8,10 @@ const PasswordGate = ({ children }) => {
   const navigate = useNavigate();
 
   const handlePasswordSubmit = () => {
-    const correctPassword = 'classroom123'; // Set your desired password here
+    const correctPassword = 'nonagoninfinity'; // Set your desired password here
     if (password === correctPassword) {
-      Cookies.set('classroomAccess', 'true', { expires: 1 }); // Set cookie for 1 day
-      navigate('/dashboard'); // Navigate to dashboard or any default route
+      Cookies.set('classroomAccess', 'true', { expires: 14 }); // Set cookie for 1 day
+      navigate('/login'); // Navigate to dashboard or any default route
     } else {
       setError('Incorrect password. Please try again.');
     }

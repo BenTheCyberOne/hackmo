@@ -14,6 +14,7 @@ const mime = require('mime');
 var database = require("./config/database");
 database.connect();
 const crypt3 = require('crypt3-passwd')
+const fs = require('fs');
 const User = require("./model/user");
 const Transaction = require("./model/transaction");
 const auth = require("./middleware/auth");
