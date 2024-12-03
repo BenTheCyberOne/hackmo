@@ -43,8 +43,9 @@ const UserDashboard = () => {
         });
 
         if (response.ok) {
-          console.log("OK",data.transactions);
+
           const data = await response.json();
+          console.log("OK",data.transactions);
           setTransactions(data.transactions); // Assume `transactions` array is returned
         } else {
           console.error('Failed to fetch transactions.');

@@ -106,7 +106,7 @@ app.post("/login", async (req, res) => {
 
     // Save user info in session
     req.session.user = { username: user.username, isAdmin: user.isAdmin };
-    //res.cookie("sessionid", req.sessionID, { secure: true });
+    res.cookie("sessionid", req.sessionID, { secure: true });
     // Set the `isAdmin` cookie based on the user's isAdmin status
     res.cookie("isAdmin", user.isAdmin.toString(), { secure: true });
     res.status(200).json({ message: "Login successful" });
