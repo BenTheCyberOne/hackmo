@@ -197,14 +197,13 @@ app.post("/send", verifySession, async (req,res) => {
       // Emit the transaction to SSE clients
     transactionEmitter.emit("newTransaction", transaction);
       res.status(200).json({ message: "successfully sent:",transaction: transaction});
-      const 
     } else{
        res.status(500).json({ message: "Looks like something went wrong..." });
     }
   } catch(err) {
     res.status(500).json({ message: "Looks like something went really wrong..." });
   }
-})
+});
 
 // Catch-all route to serve React app
 
