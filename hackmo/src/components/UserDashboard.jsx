@@ -97,6 +97,7 @@ const UserDashboard = () => {
     <div className="container dashboard">
       <h1>User Dashboard</h1>
       <p>Welcome, {username}!</p>
+      <h2> Your Balance: {balance} </h2>
       <SendComponent balance={balance} />
       <h2>Latest Transactions</h2>
       <div >

@@ -174,10 +174,14 @@ app.get("/api/transactions/stream", (req, res) => {
 
   // Listen for new transactions and send them to the client
   transactionEmitter.on("newTransaction", sendTransaction);
-
+ // Send a keep-alive message every 25 seconds to prevent timeouts
+  const keepAliveInterval = setInterval(() => {
+    res.write("data: keep-alive\n\n");
+  }, 5000); // Sends keep-alive message every 5 seconds
   // Handle client disconnection
   req.on("close", () => {
     console.log("Client disconnected from SSE stream");
+    clearInterval(keepAliveInterval);
     transactionEmitter.removeListener("newTransaction", sendTransaction);
     res.end();
   });
@@ -199,9 +203,15 @@ app.get("/api/user/stream", (req, res) => {
   // Listen for new transactions and send them to the client
   transactionEmitter.on("newBalance", sendUserData);
 
+   // Send a keep-alive message every 25 seconds to prevent timeouts
+  const keepAliveInterval = setInterval(() => {
+    res.write("data: keep-alive\n\n");
+  }, 5000); // Sends keep-alive message every 5 seconds
+
   // Handle client disconnection
   req.on("close", () => {
     console.log("Client disconnected from SSE stream");
+    clearInterval(keepAliveInterval);
     transactionEmitter.removeListener("newBalance", sendUserData);
     res.end();
   });
@@ -211,7 +221,7 @@ app.post("/send", verifySession, async (req,res) => {
   const {receiverID, amount, balance} = req.body;
   const senderID = req.session.user.username;
   try{
-    const recvExists = await User.find({username: receiverID});
+    const recvExists = await User.findOne({username: receiverID});
     if (!recvExists){
        return res.status(400).json({ message: "Error: Receiver does not exist!" });
     }
