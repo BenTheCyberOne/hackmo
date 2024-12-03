@@ -41,7 +41,7 @@ const AdminSendComponent = () => {
           <input
             type="text"
             id="senderID"
-            value={SenderID}
+            value={senderID}
             onChange={(e) => setSenderID(e.target.value)}
             required
             className="mb-2"
