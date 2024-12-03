@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'; // To handle redirects
 
 const UserDashboard = () => {
   const [username, setUsername] = useState('');
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -12,35 +13,86 @@ const UserDashboard = () => {
       try {
         const response = await fetch('/api/user', {
           method: 'GET',
-          credentials: 'include', // Make sure to include cookies for session validation
+          credentials: 'include', // Include cookies for session validation
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           setUsername(data.user.username); // Assuming the backend returns the user object with username
         } else {
-          // If the response is not okay, redirect to the register page
-          navigate('/register');
+          navigate('/register'); // Redirect if unauthorized
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        navigate('/register'); // If there's an error, redirect to the register page
+        navigate('/register');
       } finally {
-        setLoading(false); // Hide the loading spinner once the API call is done
+        setLoading(false);
       }
     };
 
     fetchUser();
   }, [navigate]);
 
+  // Fetch transactions initially and subscribe to updates
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await fetch('/api/transactions', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setTransactions(data.transactions); // Assume `transactions` array is returned
+        } else {
+          console.error('Failed to fetch transactions.');
+        }
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    fetchTransactions();
+
+    // Listen for real-time transaction updates using SSE
+    const eventSource = new EventSource('/api/transactions/stream'); // Backend SSE endpoint
+    eventSource.onmessage = (event) => {
+      const newTransaction = JSON.parse(event.data);
+      setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]); // Prepend new transaction
+    };
+
+    return () => {
+      eventSource.close(); // Clean up SSE subscription
+    };
+  }, []);
+
   if (loading) {
-    return <div>Loading...</div>; // Display a loading indicator while fetching user data
+    return <div>Loading...</div>;
   }
 
   return (
     <div>
       <h1>User Dashboard</h1>
       <p>Welcome, {username}!</p>
+      <h2>Latest Transactions</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {transactions.map((transaction, index) => (
+          <div
+            key={index}
+            style={{
+              border: '1px solid #ccc',
+              borderRadius: '5px',
+              padding: '10px',
+              backgroundColor: '#f9f9f9',
+            }}
+          >
+            <p><strong>Sender:</strong> {transaction.sender}</p>
+            <p><strong>Receiver:</strong> {transaction.receiver}</p>
+            <p><strong>Amount:</strong> {transaction.amount}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

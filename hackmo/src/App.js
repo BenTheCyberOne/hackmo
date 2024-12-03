@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import UserDashboard from './components/UserDashboard';
 import Register from './components/Registration';
+import Login from './components/Login';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // Tracks session status
@@ -40,10 +41,11 @@ const App = () => {
       <Routes>
         <Route
           path="/dashboard"
-          element={isAuthenticated ? <UserDashboard /> : <Navigate to="/register" />}
+          element={isAuthenticated ? <UserDashboard /> : <Navigate to="/login" />}
         />
         <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to={isAuthenticated ? '/dashboard' : '/register'} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} />} />
       </Routes>
     </Router>
   );

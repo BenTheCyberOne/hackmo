@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const EventEmitter = require("events");
 //const cookieParser = require("cookie-parser");
 require('dotenv').config();
 const session = require("express-session");
@@ -61,14 +62,19 @@ app.post("/register", async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
     const newUser = new User({ username, password: hashedPassword});
-    await newUser.save();
+    const userExists = User.find({username: username});
+    if (userExists){
+      res.status(400).json({ message: "Username already exists" });
+    }
+    await User.create(newUser);
+    console.log("created User:", username);
     req.session.user = { username: newUser.username, isAdmin: newUser.isAdmin };
     res.cookie("sessionid", req.sessionID, { secure: true });
     // Set the `isAdmin` cookie based on the user's isAdmin status
     res.cookie("isAdmin", newUser.isAdmin.toString(), { secure: true });
-    console.log("app.js sessions:");
-    console.log(req.session);
-    console.log(req.sessionId);
+    //console.log("app.js sessions:");
+    //console.log(req.session);
+    //console.log(req.sessionId);
     res.status(200).json({ message: "User registered successfully" });
   } catch (err) {
     if (err.code === 11000) {
@@ -126,10 +132,79 @@ app.get("/api/user", verifySession, (req, res) => {
   res.status(200).json({ user: req.session.user });
 });
 
+app.get("/api/transactions", verifySession, (req, res) => {
+  try{
+    const transactions = Transaction.find();
+    res.status(200).json(transactions);
+  } catch (err){
+    res.status(500).json(message: "Something wrong with getting transactions...");
+    console.log(err);
+  }
+})
+
 // Admin route (only accessible by users with isAdmin set to true)
 app.get("/admin", verifyAdmin, (req, res) => {
   res.status(200).json({ message: "Welcome, admin!" });
 });
+
+
+const transactionEmitter = new EventEmitter();
+
+app.get("/api/transactions/stream", (req, res) => {
+  // Set headers for SSE
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  console.log("Client connected to SSE stream");
+
+  // Function to send data to the client
+  const sendTransaction = (transaction) => {
+    res.write(`data: ${JSON.stringify(transaction)}\n\n`);
+  };
+
+  // Listen for new transactions and send them to the client
+  transactionEmitter.on("newTransaction", sendTransaction);
+
+  // Handle client disconnection
+  req.on("close", () => {
+    console.log("Client disconnected from SSE stream");
+    transactionEmitter.removeListener("newTransaction", sendTransaction);
+    res.end();
+  });
+});
+
+app.post("/send", verifySession, async (req,res) => {
+  const {receiverID, amount, balance} = req.body;
+  const senderID = req.session.user.username;
+  try{
+    const recvExists = await User.find({username: receiverID});
+    if (!recvExists){
+       res.status(400).json({ message: "Error: Receiver does not exist!" });
+    }
+    if (amount > balance){
+      res.status(401).json({ message: "Error: Not enough in your account!" });
+    }
+    newBal = balance - amount;
+    const check = await User.findOneAndUpdate({username: senderID},{$set: {balance: newBal}});
+    if (!check){
+      res.status(500).json({ message: "Something's wrong with the G-Diffuser!" });
+    }
+    const transaction = new Transaction({timestamp: new Date(), sender: senderID, receiver: receiverID, amount: amount})
+    const check2 = await Transaction.create(transaction);
+    if (check2){
+      console.log("Created Transaction: ",transaction);
+      // Emit the transaction to SSE clients
+    transactionEmitter.emit("newTransaction", transaction);
+      res.status(200).json({ message: "successfully sent:",transaction: transaction});
+      const 
+    } else{
+       res.status(500).json({ message: "Looks like something went wrong..." });
+    }
+  } catch(err) {
+    res.status(500).json({ message: "Looks like something went really wrong..." });
+  }
+})
 
 // Catch-all route to serve React app
 
