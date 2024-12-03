@@ -101,8 +101,8 @@ const UserDashboard = () => {
       console.log("_transactionStream:",event.data)
       if(event.data !== "keep-alive") {
         const newTransaction = JSON.parse(event.data);
-        console.log("transactionStream:",event.data);
-        setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]); // Prepend new transaction
+        console.log("transactionStream_:",event.data);
+        setTransactions((prevTransactions) => [newTransaction.transactions, ...prevTransactions]); // Prepend new transaction
       }
       
     };
