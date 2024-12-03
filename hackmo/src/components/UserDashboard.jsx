@@ -20,8 +20,8 @@ const UserDashboard = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setUsername(data.user.username); // Assuming the backend returns the user object with username
-          setBalance(data.user.balance);
+          setUsername(data.username); // Assuming the backend returns the user object with username
+          setBalance(data.balance);
         } else {
           return navigate('/login'); // Redirect if unauthorized
         }
