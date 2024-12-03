@@ -69,7 +69,7 @@ app.post("/register", async (req, res) => {
     console.log("app.js sessions:");
     console.log(req.session);
     console.log(req.sessionId);
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(200).json({ message: "User registered successfully" });
   } catch (err) {
     if (err.code === 11000) {
       res.status(400).json({ message: "Username already exists" });
@@ -110,7 +110,7 @@ app.post("/login", async (req, res) => {
 });
 
 // Logout route
-app.post("/logout", (req, res) => {
+app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ message: "Error logging out" });
