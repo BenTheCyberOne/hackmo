@@ -24,7 +24,7 @@ const UserDashboard = () => {
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        navigate('/register');
+        navigate('/login');
       } finally {
         setLoading(false);
       }
@@ -45,7 +45,7 @@ const UserDashboard = () => {
         if (response.ok) {
 
           const data = await response.json();
-          console.log("OK",data.transactions);
+          console.log("OK",data);
           setTransactions(data.transactions); // Assume `transactions` array is returned
         } else {
           console.error('Failed to fetch transactions.');
@@ -79,7 +79,8 @@ const UserDashboard = () => {
       <p>Welcome, {username}!</p>
       <h2>Latest Transactions</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {transactions.map((transactionN, index) => (
+      {transactions && transactions.length > 0 ? (
+        transactions.map((transactionN, index) => (
           <div
             key={index}
             style={{
@@ -93,7 +94,10 @@ const UserDashboard = () => {
             <p><strong>Receiver:</strong> {transactionN.receiver}</p>
             <p><strong>Amount:</strong> {transactionN.amount}</p>
           </div>
-        ))}
+        ))
+        ) : (
+        <p>No transactions available </p>
+        )}
       </div>
     </div>
   );
