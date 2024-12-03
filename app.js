@@ -240,8 +240,10 @@ app.post("/send", verifySession, async (req,res) => {
     if (check2){
       console.log("Created Transaction: ",transaction);
       // Emit the transaction to SSE clients
-    transactionEmitter.emit("newTransaction", transaction);
-    userEmitter.emit("newBalance", newBal);
+    const newTran = {transactions: transaction}
+    transactionEmitter.emit("newTransaction", newTran);
+    const balObj = {balance: newBal}
+    userEmitter.emit("newBalance", balObj);
       res.status(200).json({ message: "successfully sent:",transaction: transaction});
     } else{
        res.status(500).json({ message: "Looks like something went wrong..." });

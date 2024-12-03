@@ -40,7 +40,10 @@ const UserDashboard = () => {
   useEffect(() => {
     // Listen for real-time transaction updates using SSE
     const eventSource = new EventSource('/api/user/stream'); // Backend SSE endpoint
-
+      // Log when the SSE connection opens
+    eventSource.onopen = () => {
+      console.log("SSE connection established");
+    };
     eventSource.onmessage = (event) => {
       // Log the received data for debugging
       console.log("userStream:", event.data);
