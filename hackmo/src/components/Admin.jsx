@@ -7,7 +7,6 @@ import Cookies from "js-cookie";
 
 const Admin = () => {
   const [username, setUsername] = useState('');
-  const [balance, setBalance] = useState('');
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -109,8 +108,11 @@ const Admin = () => {
       if (event.data !== "keep-alive") {
         const newTransaction = JSON.parse(event.data);
         console.log("transactionStream_:", event.data);
-        setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
-        console.log("transactionsfromStream",transactions);
+        setTransactions((prevTransactions) => {
+          const updatedTransactions = [newTransaction, ...prevTransactions];
+          console.log("transactionsfromStream", updatedTransactions);
+          return updatedTransactions;
+        });
       }
     };
 

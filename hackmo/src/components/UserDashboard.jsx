@@ -93,8 +93,11 @@ const UserDashboard = () => {
       if (event.data !== "keep-alive") {
         const newTransaction = JSON.parse(event.data);
         console.log("transactionStream_:", event.data);
-        setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
-        console.log("transactionsfromStream",transactions);
+        setTransactions((prevTransactions) => {
+          const updatedTransactions = [newTransaction, ...prevTransactions];
+          console.log("transactionsfromStream", updatedTransactions);
+          return updatedTransactions;
+        });
       }
     };
 

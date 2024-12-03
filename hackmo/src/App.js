@@ -9,8 +9,6 @@ import PasswordGate from './components/PasswordGate';
 import './styles.css';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // Tracks session status
-  const [loading, setLoading] = useState(true); // Tracks whether the app is checking session
   return (
     <Router>
     <PasswordGate>
