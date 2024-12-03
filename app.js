@@ -171,7 +171,7 @@ app.get("/admin", verifyAdmin, (req, res) => {
 */
 
 app.get("/user/details/:username", async (req, res) => {
-  username = req.params;
+  const {username} = req.params;
   try{
     const user = await User.findOne({username: username});
     if(!user){
