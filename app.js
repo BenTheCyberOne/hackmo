@@ -3,9 +3,14 @@ const path = require("path");
 const EventEmitter = require("events");
 //const cookieParser = require("cookie-parser");
 require('dotenv').config();
+const multer = require('multer');
+const upload = multer({
+  dest: path.join(__dirname, 'hackmo/public'),
+});
 const session = require("express-session");
 const mongoose = require('mongoose').set('debug', true);
 const bcrypt = require("bcrypt");
+const mime = require('mime');
 var database = require("./config/database");
 database.connect();
 const crypt3 = require('crypt3-passwd')
@@ -45,6 +50,14 @@ app.use((req, res, next) => {
   next();
 });
 */
+app.post('/templates/manager', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded.' });
+  }
+
+  res.status(200).json({ message: 'File uploaded successfully.', filename: req.file.filename });
+});
+
 app.get("/api/example", (req, res) => {
 
   res.json({ message: "Hello from the API!" });
@@ -151,10 +164,63 @@ app.get("/api/transactions", verifySession, async (req, res) => {
 });
 
 // Admin route (only accessible by users with isAdmin set to true)
+/*
 app.get("/admin", verifyAdmin, (req, res) => {
   res.status(200).json({ message: "Welcome, admin!" });
 });
+*/
 
+app.get("/user/details/:username", async (req, res) => {
+  username = req.params;
+  try{
+    const user = await User.findOne({username: username});
+    if(!user){
+      res.status(404).json({ message: "User not found." });
+    }
+    res.status(200).json({user: user});
+  } catch (err){
+    res.status(500).json({ message: "Error while loading users" });
+    console.error(err);
+  }
+});
+
+app.get("/imager", (req, res) => {
+  const filePath = req.query.file;
+  if (!filePath) {
+    return res.status(400).json({ error: 'File query parameter is required.' });
+  };
+  let absPath;
+  // Check if the provided path is just a filename (no directory separators)
+  if (path.basename(filePath) === filePath) {
+    // Serve from the /public directory
+    absolutePath = path.resolve(__dirname, 'hackmo/public', filePath);
+  } else {
+    // Resolve the provided path as an absolute path
+    absolutePath = path.resolve(filePath);
+  }
+  if (!fs.existsSync(absolutePath)) {
+    return res.status(404).json({ error: 'File not found.' });
+  }
+  const mimeType = mime.getType(absolutePath);
+  // Handle image files specifically
+  if (mimeType && mimeType.startsWith('image/')) {
+    res.setHeader('Content-Type', mimeType); // Set the appropriate image MIME type
+    res.sendFile(absolutePath, (err) => {
+      if (err) {
+        console.error('Error sending image file:', err);
+        res.status(500).json({ error: 'Internal server error.' });
+      }
+    });
+  } else {
+    // Send non-image files as-is
+    res.sendFile(absolutePath, (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).json({ error: 'Internal server error.' });
+      }
+    });
+  }
+});
 
 const transactionEmitter = new EventEmitter();
 const userEmitter = new EventEmitter();
@@ -235,6 +301,47 @@ app.post("/send", verifySession, async (req,res) => {
       return res.status(401).json({ message: "Error: Not enough in your account!" });
     }
     newBal = balance - amount;
+    const check = await User.findOneAndUpdate({username: senderID},{$set: {balance: newBal}});
+    if (!check){
+      return res.status(500).json({ message: "Something's wrong with the G-Diffuser!" });
+    }
+    const transaction = new Transaction({timestamp: new Date(), sender: senderID, receiver: receiverID, amount: amount})
+    const check2 = await Transaction.create(transaction);
+    if (check2){
+      console.log("Created Transaction: ",transaction);
+      // Emit the transaction to SSE clients
+    const newTran = {transactions: transaction}
+    transactionEmitter.emit("newTransaction", newTran);
+    const balObj = {balance: newBal}
+    userEmitter.emit("newBalance", balObj);
+    sendBal = recvExists.balance + amount;
+    const check3 = await User.findOneAndUpdate({username: receiverID},{$set:{balance: sendBal}})
+    res.status(200).json({ message: "successfully sent:",transaction: transaction});
+    } else{
+       res.status(500).json({ message: "Looks like something went wrong..." });
+    }
+  } catch(err) {
+    res.status(500).json({ message: "Looks like something went really wrong..." });
+  }
+});
+
+app.post("/admin/send", verifyAdmin, async (req,res) => {
+  const {senderID, receiverID, amount} = req.body;
+  //const senderID = req.session.user.username;
+  try{
+    const recvExists = await User.findOne({username: receiverID});
+    if (!recvExists){
+       return res.status(400).json({ message: "Error: Receiver does not exist!" });
+    }
+    const sendExists = await User.findOne({username: senderID});
+    if (!sendExists){
+       return res.status(400).json({ message: "Error: Sender does not exist!" });
+    }
+    senderCurBal = sendExists.balance;
+    if (amount > senderCurBal){
+      return res.status(401).json({ message: "Error: Not enough in sender account!" });
+    }
+    newBal = senderCurBal - amount;
     const check = await User.findOneAndUpdate({username: senderID},{$set: {balance: newBal}});
     if (!check){
       return res.status(500).json({ message: "Something's wrong with the G-Diffuser!" });

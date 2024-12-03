@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion'; // Import Framer Motion
-import SendComponent from "./SendComponent";
+import AdminSendComponent from "./AdminSendComponent";
 import AnimatedBalance from "./AnimatedBalance";
+import Cookies from "js-cookie";
 
-const UserDashboard = () => {
+const Admin = () => {
   const [username, setUsername] = useState('');
   const [balance, setBalance] = useState('');
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
+
+   useEffect(() => {
+    const checkAdminStatus = () => {
+      const adminCookie = Cookies.get('isAdmin');
+      if (adminCookie === "true") {
+        setIsAdmin(true);
+      } else {
+        console.warn("Unauthorized access - not an admin");
+        navigate('/login');
+      }
+    };
+
+    checkAdminStatus();
+  }, [navigate]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -103,16 +119,16 @@ const UserDashboard = () => {
     };
   }, []);
 
-  if (loading) {
+  if (loading || !isAdmin) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="container dashboard">
-      <h1>User Dashboard</h1>
+      <h1>Admin Dashboard</h1>
+      <h2> FOR DEV USE ONLY!! </h2>
       <p>Welcome, {username}!</p>
-      <AnimatedBalance balance={balance} />
-      <SendComponent balance={balance} />
+      <AdminSendComponent />
       <h2>Latest Transactions</h2>
       <div>
         {transactions && transactions.length > 0 ? (
@@ -146,4 +162,4 @@ const UserDashboard = () => {
   );
 };
 
-export default UserDashboard;
+export default Admin;
