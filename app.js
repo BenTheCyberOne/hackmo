@@ -198,7 +198,7 @@ app.get("/api/user/stream", (req, res) => {
 
   // Function to send data to the client
   const sendUserData = (userData) => {
-    console.log('tuser-stream:' userData);
+    console.log('user-stream:',userData);
     res.write(`data: ${JSON.stringify(userData)}\n\n`);
   };
 
