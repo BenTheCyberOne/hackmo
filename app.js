@@ -141,14 +141,14 @@ app.get("/api/user", verifySession, async (req, res) => {
 });
 
 app.get("/api/transactions", verifySession, async (req, res) => {
-  try{
-    const transactions = await Transaction.find();
-    res.status(200).json({transactions: transactions});
-  } catch (err){
-    res.status(500).json({message: "Something wrong with getting transactions..."});
-    console.log(err);
+  try {
+    const transactions = await Transaction.find().sort({ timestamp: -1 }); // Sort by 'timestamp' in descending order
+    res.status(200).json({ transactions: transactions });
+  } catch (err) {
+    res.status(500).json({ message: "Something wrong with getting transactions..." });
+    console.error(err);
   }
-})
+});
 
 // Admin route (only accessible by users with isAdmin set to true)
 app.get("/admin", verifyAdmin, (req, res) => {

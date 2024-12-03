@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // To handle redirects
 import SendComponent from "./SendComponent";
-
+import AnimatedBalance from "./AnimatedBalance";
 const UserDashboard = () => {
   const [username, setUsername] = useState('');
   const [balance, setBalance] = useState('');
@@ -46,7 +46,7 @@ const UserDashboard = () => {
     };
     eventSource.onmessage = (event) => {
       // Log the received data for debugging
-      console.warn("userStream:", event.data);
+      console.log("userStream:", event.data);
 
       if (event.data !== "keep-alive") {
         try {
@@ -120,7 +120,7 @@ const UserDashboard = () => {
     <div className="container dashboard">
       <h1>User Dashboard</h1>
       <p>Welcome, {username}!</p>
-      <h2> Your Balance: ${balance} </h2>
+      <AnimatedBalance balance={balance} />
       <SendComponent balance={balance} />
       <h2>Latest Transactions</h2>
       <div >
@@ -128,8 +128,11 @@ const UserDashboard = () => {
         transactions.map((tx, index) => (
           <div className="transaction-box" key={index}>
             <h4>From: {tx.sender}</h4>
+            <br/>
             <p>To: {tx.receiver}</p>
+            <br/>
             <p>Amount: ${tx.amount}</p>
+            <p>Time: ${tx.timestamp}</p>
           </div>
         ))
         ) : (

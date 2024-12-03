@@ -55,6 +55,7 @@ const SendComponent = ({ balance }) => {
             onChange={(e) => setAmount(e.target.value)}
             required
             className="mb-2"
+            min="0"
           />
         </div>
         <button type="submit" className="button-primary">Send</button>
