@@ -39,7 +39,7 @@ const UserDashboard = () => {
   // Grab new user balance
   useEffect(() => {
     // Listen for real-time transaction updates using SSE
-    const eventSource = new EventSource('/api/user/stream'); // Backend SSE endpoint
+    const eventSource = new EventSource('/api/stream/user'); // Backend SSE endpoint
       // Log when the SSE connection opens
     eventSource.onopen = () => {
       console.log("SSE connection established");
@@ -96,7 +96,7 @@ const UserDashboard = () => {
     fetchTransactions();
 
     // Listen for real-time transaction updates using SSE
-    const eventSource = new EventSource('/api/transactions/stream'); // Backend SSE endpoint
+    const eventSource = new EventSource('/api/stream/transactions'); // Backend SSE endpoint
     eventSource.onmessage = (event) => {
       console.log("_transactionStream:",event.data)
       if(event.data !== "keep-alive") {

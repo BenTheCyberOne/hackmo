@@ -37,14 +37,14 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "hackmo/build")));
 
 // Example API route
-
+/*
 app.use((req, res, next) => {
   console.log("Session ID in the request (browser cookie):", req.cookies?.sessionid); // From browser
   console.log("Session ID assigned by server:", req.sessionID); // From middleware
   console.log("Session data from store:", req.session);
   next();
 });
-
+*/
 app.get("/api/example", (req, res) => {
 
   res.json({ message: "Hello from the API!" });
@@ -159,7 +159,7 @@ app.get("/admin", verifyAdmin, (req, res) => {
 const transactionEmitter = new EventEmitter();
 const userEmitter = new EventEmitter();
 
-app.get("/api/transactions/stream", (req, res) => {
+app.get("/api/stream/transactions", (req, res) => {
   // Set headers for SSE
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -186,12 +186,13 @@ app.get("/api/transactions/stream", (req, res) => {
   });
 });
 
-app.get("/api/user/stream", (req, res) => {
+app.get("/api/stream/user", (req, res) => {
   // Set headers for SSE
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
-  res.setHeader("Content-Encoding", "identity");
+  //res.flushHeaders();
+  //res.setHeader("Content-Encoding", "identity");
 
   console.log("Client connected to SSE stream");
   res.write('\n');
