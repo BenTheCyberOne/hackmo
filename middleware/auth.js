@@ -8,6 +8,7 @@ const sessionMiddleware = () => {
     secret: config.SESS_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     store: MongoStore.create({
       mongoUrl: "mongodb://localhost:27017/",  // MongoDB URL
       collectionName: "sessions",  // You can specify a custom collection for storing sessions

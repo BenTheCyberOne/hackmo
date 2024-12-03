@@ -62,7 +62,7 @@ app.post("/register", async (req, res) => {
     const newUser = new User({ username, password: hashedPassword});
     await newUser.save();
     req.session.user = { username: newUser.username, isAdmin: newUser.isAdmin };
-    //res.cookie("sessionid", req.sessionID, { secure: true });
+    res.cookie("sessionid", req.sessionID, { secure: true });
     // Set the `isAdmin` cookie based on the user's isAdmin status
     res.cookie("isAdmin", newUser.isAdmin.toString(), { secure: true });
     console.log("app.js sessions:");
