@@ -1,6 +1,11 @@
 /* General Reset */
 /* General Reset for common elements */
-
+html, body, div, p, h1, h2, h3, h4, h5, h6, a, ul, ol, li, form, input, button {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+*/
 /* Set the box-sizing for all elements to ensure consistent sizing */
 *, *::before, *::after {
   box-sizing: inherit;
