@@ -281,9 +281,12 @@ app.get("/api/stream/user", (req, res) => {
   console.log("Client connected to SSE stream");
   //res.write('\n');
   // Function to send data to the client
-  const sendUserData = (userData) => {
-    console.log('user-stream:',userData);
-    res.write(`data: ${JSON.stringify(userData)}\n\n`);
+  const sendUserData = (userID, userData) => {
+    if(req.session.user.username === userID){
+      console.log('user-stream:',userData);
+      res.write(`data: ${JSON.stringify(userData)}\n\n`);
+    }
+    
   };
 
   // Listen for new transactions and send them to the client
@@ -326,10 +329,11 @@ app.post("/send", verifySession, async (req,res) => {
       // Emit the transaction to SSE clients
     const newTran = {transactions: transaction}
     transactionEmitter.emit("newTransaction", newTran);
-    const balObj = {balance: newBal}
-    userEmitter.emit("newBalance", balObj);
+    
     sendBal = recvExists.balance + amount;
     const check3 = await User.findOneAndUpdate({username: receiverID},{$set:{balance: sendBal}})
+    //onst balObj = {balance: check.balance}
+    userEmitter.emit("newBalance", senderID, {balance: check.balance});
     res.status(200).json({ message: "successfully sent:",transaction: transaction});
     } else{
        res.status(500).json({ message: "Looks like something went wrong..." });
