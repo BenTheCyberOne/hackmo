@@ -93,9 +93,9 @@ app.post("/register", async (req, res) => {
     await User.create(newUser);
     console.log("created User:", username);
     req.session.user = { username: newUser.username, isAdmin: newUser.isAdmin };
-    res.cookie("sessionid", req.sessionID, { secure: true });
+    res.cookie("sessionid", req.sessionID, { httpOnly: true  });
     // Set the `isAdmin` cookie based on the user's isAdmin status
-    res.cookie("isAdmin", newUser.isAdmin.toString(), { secure: true });
+    res.cookie("isAdmin", newUser.isAdmin.toString(), { httpOnly: true  });
     //console.log("app.js sessions:");
     //console.log(req.session);
     //console.log(req.sessionId);
@@ -130,9 +130,9 @@ app.post("/login", async (req, res) => {
 
     // Save user info in session
     req.session.user = { username: user.username, isAdmin: user.isAdmin };
-    res.cookie("sessionid", req.sessionID, { secure: true });
+    res.cookie("sessionid", req.sessionID, { httpOnly: true });
     // Set the `isAdmin` cookie based on the user's isAdmin status
-    res.cookie("isAdmin", user.isAdmin.toString(), { secure: true });
+    res.cookie("isAdmin", user.isAdmin.toString(), { httpOnly: true  });
     res.status(200).json({ message: "Login successful" });
   } catch (err) {
     res.status(500).json({ message: "Error logging in" });
