@@ -39,14 +39,14 @@ const WealthiestUser = () => {
         <p className="error-message">{error}</p>
       ) : wealthiest ? (
         <div>
-          <h3>Wealthiest User</h3>
-          <p>
-            <strong>Username:</strong> {wealthiest.username}
-          </p>
-          <p>
-            <strong>Balance:</strong> ${wealthiest.balance.toFixed(2)}
-          </p>
-        </div>
+        <h3>Wealthiest User</h3>
+        <p>
+          <strong>Username:</strong> {wealthiest.username}
+        </p>
+        <p>
+          <strong>Balance:</strong> ${wealthiest.balance.toFixed(2)}
+        </p>
+      </div>
       ) : (
         <p>Loading...</p>
       )}

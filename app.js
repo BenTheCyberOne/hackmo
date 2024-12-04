@@ -344,7 +344,7 @@ app.post("/send", verifySession, async (req,res) => {
     transactionEmitter.emit("newTransaction", newTran);
     
     const newRecvBalance = recvExists.balance + amount;
-    await User.findOneAndUpdate({username: receiverID},{$set:{balance: sendBal}},{new: true});
+    await User.findOneAndUpdate({username: receiverID},{$set:{balance: newRecvBalance}},{new: true});
     //onst balObj = {balance: check.balance}
     //userEmitter.emit("newBalance", senderID, {balance: check.balance});
     // Send user-specific updates
