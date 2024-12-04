@@ -91,10 +91,10 @@ const UserDashboard = () => {
     eventSource.onmessage = (event) => {
       console.log("_transactionStream:", event.data);
       if (event.data !== "keep-alive") {
-        const newTransaction = JSON.parse(event.data.transactions);
+        const newTransaction = JSON.parse(event.data);
         console.log("transactionStream_:", event.data);
         setTransactions((prevTransactions) => {
-          const updatedTransactions = [newTransaction, ...prevTransactions];
+          const updatedTransactions = [newTransaction.transactions, ...prevTransactions];
           console.log("transactionsfromStream", updatedTransactions);
           return updatedTransactions;
         });

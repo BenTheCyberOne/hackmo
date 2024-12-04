@@ -18,7 +18,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/templates/manager" element={<TemplateManager />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
       </PasswordGate>
     </Router>
