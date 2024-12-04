@@ -69,8 +69,8 @@ const Login = () => {
           Login
         </button>
       </form>
+      <h3> For help, contact securityraven@proton.me </h3>
     </div>
-    <h3> For help, contact securityraven@proton.me </h3>
   );
 };
 
