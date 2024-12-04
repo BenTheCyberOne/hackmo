@@ -173,7 +173,7 @@ nav a:hover {
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 300px;
+  width: 1200px;
   text-align: center;
 }
 
@@ -247,11 +247,15 @@ form button:hover {
 }
 
 .transaction-box {
-  background: #f9f9f9;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem; /* Increased padding for more spacing */
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f4f4f4;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for a pop-out effect */
+  font-size: 1.1rem; /* Slightly larger font for readability */
+  line-height: 1.8; /* More spacing between lines */
+  max-width: 600px; /* Adjust size if necessary */
 }
 
 /* Dashboard Styles */
@@ -267,16 +271,6 @@ form button:hover {
   align-items: center;
 }
 
-.transaction-box {
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f4f4f4;
-}
 
 .transaction-box h4 {
   margin: 0;
@@ -284,7 +278,7 @@ form button:hover {
 }
 
 .transaction-box p {
-  margin: 0;
+  margin: 0.5rem 0; /* Space between lines */
   color: #666;
 }
 
