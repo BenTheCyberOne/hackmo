@@ -236,8 +236,14 @@ app.get("/imager", (req, res) => {
   }
 });
 
+//we need an SSE Hub to prevent network-wide broadcast of SSE for userData:
+const userHub = new EventEmitter();
 const transactionEmitter = new EventEmitter();
-const userEmitter = new EventEmitter();
+//const userEmitter = new EventEmitter();
+
+//Registry to store active clients
+const clients = new Map();
+
 
 app.get("/api/stream/transactions", (req, res) => {
   // Set headers for SSE
@@ -271,40 +277,34 @@ app.get("/api/stream/transactions", (req, res) => {
 });
 
 app.get("/api/stream/user", (req, res) => {
-  // Set headers for SSE
+  const userId = req.session.user?.username; // Ensure session is set up
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  // Set SSE headers
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
-  //res.flushHeaders();
-  //res.setHeader("Content-Encoding", "identity");
 
-  console.log("Client connected to SSE stream");
-  //res.write('\n');
-  // Function to send data to the client
-  const sendUserData = (userID, userData) => {
-    if(req.session.user.username === userID){
-      console.log('user-stream:',userData);
-      res.write(`data: ${JSON.stringify(userData)}\n\n`);
-    }
-    
-  };
+  // Register the client
+  clients.set(userId, res);
+  console.log(`User ${userId} connected to user SSE stream`);
 
-  // Listen for new transactions and send them to the client
-  userEmitter.on("newBalance", sendUserData);
-
-   // Send a keep-alive message every 5 seconds to prevent timeouts
+  // Send keep-alive messages
   const keepAliveInterval = setInterval(() => {
     res.write("data: keep-alive\n\n");
-  }, 5000); // Sends keep-alive message every 5 seconds
+  }, 5000);
 
-  // Handle client disconnection
+  // Handle disconnection
   req.on("close", () => {
-    console.log("Client disconnected from SSE stream");
+    console.log(`User ${userId} disconnected`);
     clearInterval(keepAliveInterval);
-    userEmitter.removeListener("newBalance", sendUserData);
+    clients.delete(userId);
     res.end();
   });
 });
+
 
 app.post("/send", verifySession, async (req,res) => {
   const {receiverID, amount, balance} = req.body;
@@ -333,7 +333,13 @@ app.post("/send", verifySession, async (req,res) => {
     sendBal = recvExists.balance + amount;
     const check3 = await User.findOneAndUpdate({username: receiverID},{$set:{balance: sendBal}})
     //onst balObj = {balance: check.balance}
-    userEmitter.emit("newBalance", senderID, {balance: check.balance});
+    //userEmitter.emit("newBalance", senderID, {balance: check.balance});
+    // Send user-specific updates
+    if (clients.has(senderID)) {
+      clients.get(senderID).write(
+        `data: ${JSON.stringify({ balance: check.balance })}\n\n`
+      );
+    }
     res.status(200).json({ message: "successfully sent:",transaction: transaction});
     } else{
        res.status(500).json({ message: "Looks like something went wrong..." });
