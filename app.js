@@ -93,9 +93,9 @@ app.post("/register", async (req, res) => {
     await User.create(newUser);
     console.log("created User:", username);
     req.session.user = { username: newUser.username, isAdmin: newUser.isAdmin };
-    res.cookie("sessionid", req.sessionID, { httpOnly: true  });
+    res.cookie("sessionid", req.sessionID, { secure: true, sameSite: "None" });
     // Set the `isAdmin` cookie based on the user's isAdmin status
-    res.cookie("isAdmin", newUser.isAdmin.toString(), { httpOnly: true  });
+    res.cookie("isAdmin", newUser.isAdmin.toString(), { secure: true, sameSite: "None" });
     //console.log("app.js sessions:");
     //console.log(req.session);
     //console.log(req.sessionId);
@@ -130,9 +130,9 @@ app.post("/login", async (req, res) => {
 
     // Save user info in session
     req.session.user = { username: user.username, isAdmin: user.isAdmin };
-    res.cookie("sessionid", req.sessionID, { httpOnly: true });
+    res.cookie("sessionid", req.sessionID, { secure: true, sameSite: "None" });
     // Set the `isAdmin` cookie based on the user's isAdmin status
-    res.cookie("isAdmin", user.isAdmin.toString(), { httpOnly: true  });
+    res.cookie("isAdmin", user.isAdmin.toString(), { secure: true, sameSite: "None"});
     res.status(200).json({ message: "Login successful" });
   } catch (err) {
     res.status(500).json({ message: "Error logging in" });
@@ -147,7 +147,8 @@ app.get("/logout", (req, res) => {
     }
     res.clearCookie("sessionid");
     res.clearCookie("isAdmin");
-    res.status(200).json({ message: "User logged out" });
+    //res.status(200).json({ message: "User logged out" });
+    res.redirect("/login");
   });
 });
 
@@ -338,6 +339,7 @@ app.post("/send", verifySession, async (req,res) => {
 
 app.post("/admin/send", verifyAdmin, async (req,res) => {
   const {senderID, receiverID, amount} = req.body;
+  console.log("Cookies:", req.cookies);
   //const senderID = req.session.user.username;
   try{
     const recvExists = await User.findOne({username: receiverID});

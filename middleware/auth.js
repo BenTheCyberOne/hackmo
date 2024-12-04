@@ -34,7 +34,7 @@ const verifySession = (req, res, next) => {
 
 const verifyAdmin = (req, res, next) => {
   console.log("cookies:", req.cookies);
-	if (!req.session.user || req.cookies?.isAdmin !== 'true' || !req.session.user.isAdmin) {
+	if (!req.session.user || req.cookies?.isAdmin !== 'true') {
     	return res.status(401).json({ message: "Forbidden. Must be an Admin." });
   	}
 
