@@ -386,9 +386,9 @@ app.post("/admin/send", verifyAdmin, async (req,res) => {
     if (amount > senderCurBal){
       return res.status(401).json({ message: "Error: Not enough in sender account!" });
     }
-    newBal = senderCurBal - amount;
-    const check = await User.findOneAndUpdate({username: senderID},{$set: {balance: newBal}});
-    if (!check){
+    newSenderBalance = senderCurBal - amount;
+    const sendUpdate = await User.findOneAndUpdate({username: senderID},{$set: {balance: newSenderBalance}},{new: true});
+    if (!sendUpdate){
       return res.status(500).json({ message: "Something's wrong with the G-Diffuser!" });
     }
     const transaction = new Transaction({timestamp: new Date(), sender: senderID, receiver: receiverID, amount: amount})
@@ -398,10 +398,21 @@ app.post("/admin/send", verifyAdmin, async (req,res) => {
       // Emit the transaction to SSE clients
     const newTran = {transactions: transaction}
     transactionEmitter.emit("newTransaction", newTran);
-    const balObj = {balance: newBal}
-    userEmitter.emit("newBalance", balObj);
-    sendBal = recvExists.balance + amount;
-    const check3 = await User.findOneAndUpdate({username: receiverID},{$set:{balance: sendBal}})
+    //const balObj = {balance: newBal}
+    //userEmitter.emit("newBalance", balObj);
+    newRecvBalance = recvExists.balance + amount;
+    await User.findOneAndUpdate({username: receiverID},{$set:{balance: newRecvBalance}},{new: true});
+    // Send user-specific updates
+    if (clients.has(senderID)) {
+      clients.get(senderID).write(
+        `data: ${JSON.stringify({ balance: newSenderBalance })}\n\n`
+      );
+    }
+    if (clients.has(receiverID)) {
+      clients.get(receiverID).write(
+        `data: ${JSON.stringify({ balance: newRecvBalance })}\n\n`
+      );
+    }
     res.status(200).json({ message: "successfully sent:",transaction: transaction});
     } else{
        res.status(500).json({ message: "Looks like something went wrong..." });
