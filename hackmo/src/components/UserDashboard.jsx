@@ -17,7 +17,7 @@ const UserDashboard = () => {
     try {
       // Make a POST request to the /logout route
       const response = await fetch('/logout', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
