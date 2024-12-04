@@ -164,9 +164,9 @@ const UserDashboard = () => {
               >
                 
                 <h4>From: {tx.sender}</h4>
-                <br />
-                <p>To: {tx.receiver}</p>
-                <br />
+                
+                <strong>To: {tx.receiver}</strong>
+                
                 <p>Amount: ${tx.amount}</p>
                 
                 <p>Time: {tx.timestamp ? new Date(tx.timestamp).toLocaleString() : "Unknown"}</p>
