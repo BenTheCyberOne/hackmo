@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import styles from './PasswordGate.module.css';
 
 const PasswordGate = ({ children }) => {
   const [password, setPassword] = useState('');
@@ -23,7 +24,7 @@ const PasswordGate = ({ children }) => {
   }
 
   return (
-    <div className="password-gate" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#f7f7f7' }}>
+    <div className={styles.passwordGate} >
       <h2>Enter Classroom Password</h2>
       <input
         type="password"
@@ -32,7 +33,7 @@ const PasswordGate = ({ children }) => {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handlePasswordSubmit}>Submit</button>
-      {error && <p className="error">{error}</p>}
+      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 };

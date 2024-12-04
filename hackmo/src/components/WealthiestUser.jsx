@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import styles from './WealthiestUser.module.css';
 
 const WealthiestUser = () => {
   const [wealthiest, setWealthiest] = useState(null);
@@ -34,7 +35,7 @@ const WealthiestUser = () => {
   }, []);
 
   return (
-    <div className="wealthiest-user">
+    <div className={styles.wealthiestUser}>
       {error ? (
         <p className="error-message">{error}</p>
       ) : wealthiest ? (
