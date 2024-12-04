@@ -18,6 +18,9 @@ const Register = () => {
     if (username.length < 3) {
       return 'Username must be at least 3 characters long.';
     }
+    if (username.length > 15) {
+      return 'Username must be less than 15 characters long.';
+    }
     if (!mongoSafeRegex.test(username)) {
       return 'Username contains invalid characters. Only letters, numbers, _, -, and . are allowed.';
     }
