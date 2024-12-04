@@ -13,7 +13,7 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  onst handleLogout = async () => {
+  const handleLogout = async () => {
     try {
       // Make a POST request to the /logout route
       const response = await fetch('/logout', {
