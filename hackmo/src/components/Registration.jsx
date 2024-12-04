@@ -30,7 +30,7 @@ const Register = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const usernameError = isUsernameValid(username);
     if (usernameError) {
       setErrorMessage(usernameError);
@@ -63,9 +63,9 @@ const Register = () => {
   };
 
   return (
-    <div className="login-wrapper">
+    <div className="container register-container">
     <Banner />
-      <h2 className="header">Login</h2>
+      <h2 className="header">Register</h2>
       {errorMessage && <p className="error-text">{errorMessage}</p>}
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-group">
