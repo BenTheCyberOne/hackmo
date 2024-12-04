@@ -177,6 +177,19 @@ app.get("/api/transactions", verifySession, async (req, res) => {
   }
 });
 
+app.get("/api/wealthy", verifySession, async (req, res) => {
+  try {
+    const mostWealthy = await User.find().sort({ balance: -1 }).limit(1); // Sort by highest balance
+    if (mostWealthy.length === 0) {
+      return res.status(404).json({ message: "No users found." });
+    }
+    res.status(200).json({ user: mostWealthy[0] });
+  } catch (err) {
+    res.status(500).json({ message: "Error retrieving wealthiest user." });
+    console.error(err);
+  }
+});
+
 // Admin route (only accessible by users with isAdmin set to true)
 /*
 app.get("/admin", verifyAdmin, (req, res) => {
@@ -319,7 +332,7 @@ app.post("/send", verifySession, async (req,res) => {
     }
     newSenderBalance = balance - amount;
     const sendUpdate = await User.findOneAndUpdate({username: senderID},{$set: {balance: newSenderBalance}},{new: true});
-    if (!senderUpdate){
+    if (!sendUpdate){
       return res.status(500).json({ message: "Something's wrong with the G-Diffuser!" });
     }
     const transaction = new Transaction({timestamp: new Date(), sender: senderID, receiver: receiverID, amount: amount})
@@ -347,9 +360,11 @@ app.post("/send", verifySession, async (req,res) => {
     }
     res.status(200).json({ message: "successfully sent:",transaction: transaction});
     } else{
+       console.log(err);
        res.status(500).json({ message: "Looks like something went wrong..." });
     }
   } catch(err) {
+    console.log(err);
     res.status(500).json({ message: "Looks like something went really wrong..." });
   }
 });

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion'; // Import Framer Motion
 import SendComponent from "./SendComponent";
 import AnimatedBalance from "./AnimatedBalance";
+import WealthiestUser from "./WealthiestUser";
 
 const UserDashboard = () => {
   const [username, setUsername] = useState('');
@@ -113,6 +114,7 @@ const UserDashboard = () => {
   return (
     <div className="container dashboard">
       <h1>User Dashboard</h1>
+      <WealthiestUser />
       <p>Welcome, {username}!</p>
       <AnimatedBalance balance={balance} />
       <SendComponent balance={balance} />
