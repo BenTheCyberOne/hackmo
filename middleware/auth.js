@@ -1,7 +1,6 @@
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser"); // Import cookie-parser
 const config = process.env;
 
 const sessionMiddleware = () => {
@@ -33,7 +32,7 @@ const verifySession = (req, res, next) => {
 };
 
 const verifyAdmin = (req, res, next) => {
-  console.log("cookies:", req.cookies);
+  //console.log("cookies:", req.cookies);
 	if (!req.session.user || req.cookies?.isAdmin !== 'true') {
     	return res.status(401).json({ message: "Forbidden. Must be an Admin." });
   	}

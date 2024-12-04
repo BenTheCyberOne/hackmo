@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const EventEmitter = require("events");
+const cookieParser = require("cookie-parser"); // Import cookie-parser
 //const cookieParser = require("cookie-parser");
 require('dotenv').config();
 const multer = require('multer');
@@ -32,6 +33,7 @@ const { sessionMiddleware, verifySession, verifyAdmin } = require("./middleware/
 //require('dotenv').config();
 const app = express(); const PORT = process.env.PORT || 4000;
 console.log(process.env.MONGO_URI);
+app.use(cookieParser());
 const cors = require('cors');
 
    const corsOptions = {
@@ -339,7 +341,7 @@ app.post("/send", verifySession, async (req,res) => {
 
 app.post("/admin/send", verifyAdmin, async (req,res) => {
   const {senderID, receiverID, amount} = req.body;
-  console.log("Cookies:", req.cookies);
+  //console.log("Cookies:", req.cookies);
   //const senderID = req.session.user.username;
   try{
     const recvExists = await User.findOne({username: receiverID});
