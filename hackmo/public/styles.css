@@ -131,7 +131,7 @@ nav a:hover {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.dashboard .logout-btn {
+.dashboard logout-btn {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -145,11 +145,11 @@ nav a:hover {
   transition: background-color 0.3s ease;
 }
 
-.dashboard .logout-btn:hover {
+.dashboard logout-btn:hover {
   background-color: #c0392b; /* Darker red on hover */
 }
 
-.dashboard .logout-btn:focus {
+.dashboard logout-btn:focus {
   outline: none; /* Remove outline on focus */
 }
 
