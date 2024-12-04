@@ -121,7 +121,7 @@ const UserDashboard = () => {
     <div className="container dashboard">
     <Banner />
       {/* Logout Button */}
-      <button className="logout-btn" onClick={onLogout}>Logout</button>
+      <button className="logout-btn" onClick={handleLogout}>Logout</button>
 
       <h1>User Dashboard</h1>
       <WealthiestUser />
