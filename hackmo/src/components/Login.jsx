@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Banner from './Banner';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -34,6 +35,7 @@ const Login = () => {
 
   return (
     <div className="container login-container">
+    <Banner />
       <h2 className="title">Login</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <form className="form" onSubmit={handleLogin}>
