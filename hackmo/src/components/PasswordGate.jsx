@@ -23,7 +23,7 @@ const PasswordGate = ({ children }) => {
   }
 
   return (
-    <div className="password-gate">
+    <div className="password-gate" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#f7f7f7' }}>
       <h2>Enter Classroom Password</h2>
       <input
         type="password"
