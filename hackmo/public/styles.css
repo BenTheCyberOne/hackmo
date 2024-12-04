@@ -25,6 +25,15 @@ body {
 }
 
 #root {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #0078d7, #e3f2fd); /* Gradient from blue to light blue */
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
   width: 100%;
   height: 100%;
 }
@@ -137,7 +146,7 @@ nav a:hover {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.container .logout-button {
+.container .logout-btn {
   position: absolute;
   top: 10px;
   left: 20px;
@@ -151,7 +160,7 @@ nav a:hover {
   transition: background-color 0.3s;
 }
 
-.container .logout-button:hover {
+.container .logout-btn:hover {
   background-color: #e04343;
 }
 

@@ -70,6 +70,7 @@ const Login = () => {
         </button>
       </form>
     </div>
+    <h3> For help, contact securityraven@proton.me </h3>
   );
 };
 

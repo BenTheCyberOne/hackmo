@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Banner from './Banner';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -8,9 +9,33 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
+  //naughty words
+  const prohibitedWords = ['nigger', 'nigga', 'faggot', 'cock', 'cunt', 'retard', 'fuck', 'shit', 'ass', 'pussy'];
+  // Regular expression for MongoDB-safe characters
+  const mongoSafeRegex = /^[a-zA-Z0-9_.-]+$/;
+
+  const isUsernameValid = (username) => {
+    if (username.length < 3) {
+      return 'Username must be at least 3 characters long.';
+    }
+    if (!mongoSafeRegex.test(username)) {
+      return 'Username contains invalid characters. Only letters, numbers, _, -, and . are allowed.';
+    }
+    for (let word of prohibitedWords) {
+      if (username.toLowerCase().includes(word)) {
+        return 'Username contains inappropriate language.';
+      }
+    }
+    return null;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
+    const usernameError = isUsernameValid(username);
+    if (usernameError) {
+      setErrorMessage(usernameError);
+      return;
+    }
     // Check if the passwords match
     if (password !== confirmPassword) {
       setErrorMessage("Passwords don't match.");
@@ -39,6 +64,7 @@ const Register = () => {
 
   return (
     <div className="login-wrapper">
+    <Banner />
       <h2 className="header">Login</h2>
       {errorMessage && <p className="error-text">{errorMessage}</p>}
       <form className="form" onSubmit={handleSubmit}>
