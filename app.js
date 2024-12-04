@@ -149,8 +149,8 @@ app.get("/logout", (req, res) => {
     }
     res.clearCookie("sessionid");
     res.clearCookie("isAdmin");
-    //res.status(200).json({ message: "User logged out" });
-    res.redirect("/login");
+    res.status(200).json({ message: "User logged out" });
+    //res.redirect("/login");
   });
 });
 

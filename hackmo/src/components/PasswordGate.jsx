@@ -34,6 +34,8 @@ const PasswordGate = ({ children }) => {
       />
       <button onClick={handlePasswordSubmit}>Submit</button>
       {error && <p className={styles.error}>{error}</p>}
+      <br />
+      <p>NOTICE: THIS WEBAPP IS INTENTIONALLY VULNERABLE. ENTER AT YOUR OWN RISK. AND PLEASE, KEEP IT PG-13/SCHOOL APPROPRIATE </p>
     </div>
   );
 };

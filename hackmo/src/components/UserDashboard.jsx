@@ -13,9 +13,29 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Any necessary cleanup logic (e.g., clearing user data)
-    navigate('/logout'); // Redirect to /logout
+  onst handleLogout = async () => {
+    try {
+      // Make a POST request to the /logout route
+      const response = await fetch('/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include credentials (cookies, session data, etc.)
+      });
+
+      if (response.ok) {
+
+        // Redirect the user to the login page
+        navigate('/login');
+      } else {
+        console.error('Logout failed');
+        alert('Logout failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+      alert('An error occurred. Please try again.');
+    }
   };
 
   useEffect(() => {
