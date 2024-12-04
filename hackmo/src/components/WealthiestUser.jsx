@@ -45,7 +45,7 @@ const WealthiestUser = () => {
           <strong>Username:</strong> {wealthiest.username}
         </p>
         <p>
-          <strong>Balance:</strong> ${wealthiest.balance.toFixed(2)}
+          <strong>Balance:</strong> $<balance>{wealthiest.balance.toFixed(2)}</balance>
         </p>
       </div>
       ) : (

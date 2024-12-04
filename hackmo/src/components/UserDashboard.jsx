@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'; // Import Framer Motion
 import SendComponent from "./SendComponent";
 import AnimatedBalance from "./AnimatedBalance";
 import WealthiestUser from "./WealthiestUser";
+import Banner from './Banner';
 
 const UserDashboard = () => {
   const [username, setUsername] = useState('');
@@ -11,6 +12,11 @@ const UserDashboard = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Any necessary cleanup logic (e.g., clearing user data)
+    navigate('/logout'); // Redirect to /logout
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -113,6 +119,10 @@ const UserDashboard = () => {
 
   return (
     <div className="container dashboard">
+    <Banner />
+      {/* Logout Button */}
+      <button className="logout-btn" onClick={onLogout}>Logout</button>
+
       <h1>User Dashboard</h1>
       <WealthiestUser />
       <p>Welcome, {username}!</p>
