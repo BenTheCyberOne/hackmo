@@ -340,6 +340,11 @@ app.post("/send", verifySession, async (req,res) => {
         `data: ${JSON.stringify({ balance: check.balance })}\n\n`
       );
     }
+    if (clients.has(receiverID)) {
+      clients.get(receiverID).write(
+        `data: ${JSON.stringify({ balance: check3.balance })}\n\n`
+      );
+    }
     res.status(200).json({ message: "successfully sent:",transaction: transaction});
     } else{
        res.status(500).json({ message: "Looks like something went wrong..." });
