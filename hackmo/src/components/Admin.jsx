@@ -80,7 +80,7 @@ const Admin = () => {
         const newTransaction = JSON.parse(event.data);
         console.log("transactionStream_:", event.data);
         setTransactions((prevTransactions) => {
-          const updatedTransactions = [[newTransaction.transactions, ...prevTransactions];
+          const updatedTransactions = [newTransaction.transactions, ...prevTransactions];
           console.log("transactionsfromStream", updatedTransactions);
           return updatedTransactions;
         });
